@@ -10,7 +10,6 @@ export default function AdminPage() {
   const [orders, setOrders] = useState([]);
   const [view, setView] = useState('login'); 
   
-  // Supabase Auth State'leri
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   
@@ -20,7 +19,6 @@ export default function AdminPage() {
   const [resetEmail, setResetEmail] = useState('');
   const [resetSent, setResetSent] = useState(false); 
 
-  // 1. SİSTEM YÜKLENDİĞİNDE OTURUMU KONTROL ET
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -36,26 +34,34 @@ export default function AdminPage() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 2. OTOMATİK SİPARİŞ YENİLEME
   useEffect(() => {
     if (session) {
-      const interval = setInterval(fetchOrders, 30000);
-      return () => clearInterval(interval);
+      const interval = setInterval(fetchOrders, 120000);
+      const channel = supabase.channel('admin-dashboard')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, 
+          (payload) => {
+            fetchOrders();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        clearInterval(interval);
+        supabase.removeChannel(channel);
+      };
     }
   }, [session]);
 
-  // SİPARİŞLERİ ÇEK (Sadece Teslim Edilmeyenleri Getir)
   async function fetchOrders() {
     const { data, error } = await supabase
       .from('orders')
       .select('*')
-      .neq('status', 'delivered') // Teslim edilenleri ekranda gösterme
+      .neq('status', 'delivered')
       .order('created_at', { ascending: false });
       
     if (!error && data) setOrders(data);
   }
 
-  // DURUM GÜNCELLEME FONKSİYONU
   async function updateOrderStatus(id, newStatus) {
     const { error } = await supabase
       .from('orders')
@@ -63,14 +69,12 @@ export default function AdminPage() {
       .eq('id', id);
       
     if (!error) {
-      // Ekranı anında güncelle
       fetchOrders();
     } else {
       alert("Error updating order status!");
     }
   }
 
-  // SUPABASE GİRİŞ İŞLEMİ
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
@@ -84,12 +88,10 @@ export default function AdminPage() {
     }
   };
 
-  // ÇIKIŞ İŞLEMİ
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
 
-  // GERÇEK ŞİFRE SIFIRLAMA İŞLEMİ
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (!resetEmail.includes('@')) { setError('Please enter a valid email address.'); return; }
@@ -106,12 +108,10 @@ export default function AdminPage() {
     }
   };
 
-  // EKRAN YÜKLENİYOR
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading Secure Environment...</div>;
   }
 
-  // 1. EKRAN: GİRİŞ YAPILMAMIŞSA
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: BRAND.bg }}>
@@ -174,7 +174,6 @@ export default function AdminPage() {
     );
   }
 
-  // 2. EKRAN: CANLI SİPARİŞ EKRANI (DASHBOARD)
   return (
     <div style={{ backgroundColor: BRAND.bg, minHeight: '100vh' }}>
       <header className="border-b p-4 flex justify-between items-center sticky top-0 z-10" style={{ backgroundColor: BRAND.ink, color: 'white' }}>
@@ -240,7 +239,6 @@ export default function AdminPage() {
                     ))}
                   </div>
                   
-                  {/* AKSİYON BUTONLARI */}
                   <div className="border-t border-gray-100 pt-4 mt-auto">
                     {!isPreparing ? (
                       <button 
