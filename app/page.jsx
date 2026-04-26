@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   ShoppingBag, Plus, Minus, X, Check, Phone, User,
-  ChevronRight, ArrowLeft, Store, Flame, ShieldCheck, Bell, Search, Clock, Package
+  ChevronRight, ArrowLeft, Store, Flame, ShieldCheck, Bell, Search, Clock, Package, MapPin,Camera as Instagram, Mail
 } from 'lucide-react';
 import { supabase } from '../lib/supabase'; 
 
@@ -22,21 +22,20 @@ const BRAND = {
 const STYLE_TAG = `
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 *,*::before,*::after{ box-sizing:border-box; }
-html,body{ margin:0; padding:0; background:transparent; color:${BRAND.ink}; font-family:'Plus Jakarta Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+html,body{ margin:0; padding:0; background:${BRAND.bg}; color:${BRAND.ink}; font-family:'Plus Jakarta Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased; scroll-behavior: smooth; }
 .font-display{ font-family:'Fraunces',Georgia,serif; font-optical-sizing:auto; letter-spacing:-0.01em; }
 .font-body{ font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
 .scroll-hide::-webkit-scrollbar{ display:none; }
 .scroll-hide{ -ms-overflow-style:none; scrollbar-width:none; }
 button:focus-visible{ outline: 2px solid ${BRAND.gold}; outline-offset: 2px; border-radius: 6px; }
 
-/* Video Arka Plan Ayarları */
 .video-bg-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 0; 
   overflow: hidden;
   background-color: #000;
 }
@@ -44,7 +43,7 @@ button:focus-visible{ outline: 2px solid ${BRAND.gold}; outline-offset: 2px; bor
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.6) contrast(1.1); 
+  filter: brightness(0.5) contrast(1.1); 
 }
 .content-wrapper {
   position: relative;
@@ -65,31 +64,37 @@ button:focus-visible{ outline: 2px solid ${BRAND.gold}; outline-offset: 2px; bor
 ============================================================ */
 const T = {
   EN: { 
+    navMenu: 'Menu', navAbout: 'About Us', navContact: 'Contact',
     cart: 'Cart', yourCart: 'Your Cart', emptyCart: 'Your cart is empty', pay: 'Total to pay', checkout: 'Proceed to Checkout', add: 'Add to Cart', size: 'Size', required: 'Required', selectMissing: 'Select required options', heroTitle: 'Lebanon captured', heroSub: 'in a glass.', heroDesc: 'Authentic Lebanese shakes with ashta, fresh fruits, nuts, and honey. Order online, choose your pickup slot, and collect straight from our store — skip the line.', preparingToast: 'Great news! Your order is now being prepared.', readyToast: 'Your order is ready for pickup! See you soon.',
     trackOrder: 'Track Order', trackTitle: 'Track Your Order', phoneLabel: 'Phone Number', checkStatus: 'Check Status', notFound: 'No recent orders found for this number.', status_new: 'Order Received', status_preparing: 'Preparing', status_delivered: 'Delivered',
-    promoTitle: 'Specially for You!', promoSub: 'Treat yourself to something sweet today.', upsellTitle: 'Complete your order', upsellDesc: 'How about adding these Lebanese classics?', extras: 'Extras',
+    promoTitle: 'Specially for You!', promoSub: 'Treat yourself to something sweet today.', upsellTitle: 'Complete your order', upsellDesc: "Haven't tried our authentic Lebanese desserts yet?", extras: 'Extras',
     capacityError: 'Sorry, this time slot is full. Please choose another one.',
     callMessage: 'Our staff will call you shortly to confirm your order.',
     generalError: 'Something went wrong. Please try again.',
-    authError: 'Authentication error. Please refresh the page.'
+    authError: 'Authentication error. Please refresh the page.',
+    address: 'Address', openingHours: 'Opening Hours', followUs: 'Follow Us'
   },
   PL: { 
+    navMenu: 'Menu', navAbout: 'O Nas', navContact: 'Kontakt',
     cart: 'Koszyk', yourCart: 'Twój koszyk', emptyCart: 'Twój koszyk jest pusty', pay: 'Do zapłaty', checkout: 'Przejdź do odbioru', add: 'Dodaj do koszyka', size: 'Rozmiar', required: 'Wymagane', selectMissing: 'Wybierz wymagane opcje', heroTitle: 'Liban zaklęty', heroSub: 'w szklance.', heroDesc: 'Autentyczne libańskie koktajle z serkiem aszta, świeżymi owocami, orzechami i miodem. Zamów online, wybierz slot odbioru i odbierz prosto z naszego lokalu — bez kolejek.', preparingToast: 'Świetna wiadomość! Twoje zamówienie jest przygotowywane.', readyToast: 'Twoje zamówienie jest gotowe do odbioru! Do zobaczenia.',
     trackOrder: 'Śledź Zamówienie', trackTitle: 'Śledź swoje zamówienie', phoneLabel: 'Numer telefonu', checkStatus: 'Sprawdź status', notFound: 'Brak aktywnych zamówień dla tego numeru.', status_new: 'Przyjęte', status_preparing: 'W przygotowaniu', status_delivered: 'Odebrane',
     promoTitle: 'Specjalnie dla Ciebie!', promoSub: 'Pozwól sobie na coś słodkiego.', upsellTitle: 'Uzupełnij zamówienie', upsellDesc: 'Może dodasz te libańskie klasyki?', extras: 'Dodatki',
     capacityError: 'Przepraszamy, ten slot czasowy jest pełny. Wybierz inny.',
-    callMessage: 'Nasz personel skontaktuje się z Tobą telefonicznie w celu potwierdzenia zamówienia.',
-    generalError: 'Coś poszło nie tak. Spróbuj ponownie.',
-    authError: 'Błąd uwierzytelniania. Odśwież stronę.'
+    callMessage: 'Nasz personel skontaktuje się z Tobą telefonicznie w celu potwierzenia zamówienia.',
+    generalError: 'Coś poszło ne tak. Spróbuj ponownie.',
+    authError: 'Błąd uwierzytelniania. Odśwież stronę.',
+    address: 'Adres', openingHours: 'Godziny Otwarcia', followUs: 'Śledź Nas'
   },
   AR: { 
+    navMenu: 'القائمة', navAbout: 'من نحن', navContact: 'اتصل بنا',
     cart: 'عربة التسوق', yourCart: 'عربة التسوق الخاصة بك', emptyCart: 'عربة التسوق فارغة', pay: 'المجموع', checkout: 'الذهاب للدفع', add: 'أضف إلى السلة', size: 'الحجم', required: 'مطلوب', selectMissing: 'حدد الخيارات المطلوبة', heroTitle: 'لبنان مسحور', heroSub: 'في كأس.', heroDesc: 'مخفوق لبناني أصيل مع قشطة، فواكه طازجة، مكسرات وعسل. اطلب عبر الإنترنت، اختر وقت الاستلام، واستلم من متجرنا مباشرة — بدون طوابير.', preparingToast: 'أخبار رائعة! يتم تحضير طلبك الآن.', readyToast: 'طلبك جاهز للاستلام! نراك قريباً.',
     trackOrder: 'تتبع الطلب', trackTitle: 'تتبع طلبك', phoneLabel: 'رقم الهاتف', checkStatus: 'تحقق من الحالة', notFound: 'لم يتم العثور على طلبات نشطة لهذا الرقم.', status_new: 'تم الاستلام', status_preparing: 'قيد التحضير', status_delivered: 'تم التسليم',
     promoTitle: 'خصيصا لك!', promoSub: 'دلل نفسك بشيء حلو اليوم.', upsellTitle: 'أكمل طلبك', upsellDesc: 'ما رأيك في إضافة هذه الكلاسيكيات اللبنانية؟', extras: 'إضافات',
     capacityError: 'عذرًا، هذه الفترة الزمنية ممتلئة. يرجى اختيار واحدة أخرى.',
     callMessage: 'سيتصل بك موظفونا قريبًا لتأكيد طلبك.',
     generalError: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
-    authError: 'خطأ في المصادقة. يرجى تحديث الصفحة.'
+    authError: 'خطأ في المصادقة. يرجى تحديث الصفحة.',
+    address: 'العنوان', openingHours: 'ساعات العمل', followUs: 'تابعنا'
   },
 };
 
@@ -97,31 +102,98 @@ const T = {
    MENU DATA
 ============================================================ */
 const CATEGORIES = [
-  { id: 'shakes', name: 'Lebanese Shakes', namePl: 'Koktajle', nameAr: 'مخفوق لبناني', icon: '🥤' },
-  { id: 'specials', name: 'Lebanese Specials', namePl: 'Libańskie Speciały', nameAr: 'تخصصات لبنانية', icon: '🍯' },
-  { id: 'juices', name: 'Fresh Juices', namePl: 'Świeże Soki', nameAr: 'عصائر طازجة', icon: '🍊' },
-  { id: 'lody', name: 'Ice Cream', namePl: 'Lody', nameAr: 'آيس كريم', icon: '🍦' },
+  { id: 'cocktails', name: 'Lebanese Cocktails', namePl: 'Libańskie Koktajle', nameAr: 'كوكتيلات لبنانية', icon: '🍹' },
+  { id: 'protein_shakes', name: 'Protein Shakes', namePl: 'Szejki Białkowe', nameAr: 'مخفوق البروتين', icon: '💪' },
+  { id: 'healthy_mixes', name: 'Healthy Mixes', namePl: 'Zdrowe Miksy', nameAr: 'خلطات صحية', icon: '🍏' },
+  { id: 'milkshakes', name: 'Milkshakes', namePl: 'Szejki Mleczne', nameAr: 'ميلك شيك', icon: '🥤' },
+  { id: 'juices', name: 'Fresh Juices & Lemonade', namePl: 'Świeże Soki i Lemoniady', nameAr: 'عصائر طازجة', icon: '🍊' },
+  { id: 'waffles', name: 'Waffles', namePl: 'Gofry', nameAr: 'وافل', icon: '🧇' },
+  { id: 'crepes', name: 'Crepes', namePl: 'Naleśniki', nameAr: 'كريب', icon: '🥞' },
+  { id: 'desserts', name: 'Ice Cream & Desserts', namePl: 'Lody i Desery', nameAr: 'آيس كريم وحلويات', icon: '🍨' },
+  { id: 'combo', name: 'Combo', namePl: 'Combo', nameAr: 'كومبو', icon: '🎁' },
+  { id: 'drinks', name: 'Tea & Coffee', namePl: 'Kawa i Herbata', nameAr: 'شاي وقهوة', icon: '☕' },
 ];
 
 const MENU_ITEMS = {
-  shakes: [
-    { id: 'annaya', name: 'Annaya', tagline: 'Lebanese ashta & nuts', sizes: [{ label: '350g', price: 35.5 }] },
-    { id: 'batrun', name: 'Batrun', tagline: 'Avocado, ashta, pineapple, mango, nuts, honey', sizes: [{ label: '300ml', price: 37.5 }, { label: '500ml', price: 43.5 }] },
-    { id: 'balbek', name: 'Balbek', tagline: 'Strawberry, mango, ashta, pineapple, nuts, honey', sizes: [{ label: '300ml', price: 35.5 }, { label: '500ml', price: 39.5 }], popular: true },
+  cocktails: [
+    { id: 'trypoli', name: 'Trypoli', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/trypolis.jpg', tagline: 'Seasonal fruits, strawberry shake, ashta, nuts, raisins, honey', sizes: [{ label: '300ml', price: 28.0 }, { label: '500ml', price: 34.0 }] },
+    { id: 'sidon', name: 'Sidon', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/sydon.png', tagline: 'Seasonal fruits, avocado shake, ashta, nuts, raisins, honey', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 37.0 }] },
+    { id: 'batroun', name: 'Batroun', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/batroun.png', tagline: 'Seasonal fruits, avocado shake, pineapple, mango, ashta, nuts, honey', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 38.0 }], popular: true },
+    { id: 'jounieh', name: 'Jounieh', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jounieh%20.png', tagline: 'Seasonal fruits, avocado & strawberry shake, ashta, nuts, raisins, honey', sizes: [{ label: '300ml', price: 29.0 }, { label: '500ml', price: 35.0 }] },
+    { id: 'beirut', name: 'Beirut', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/bejrut-1.png', tagline: 'Avocado shake, pineapple, mango, ashta, nuts, raisins, honey', sizes: [{ label: '300ml', price: 33.0 }, { label: '500ml', price: 38.0 }], popular: true },
+    { id: 'baalbek', name: 'Baalbek', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Koktajl%20baalbek.jpg', tagline: 'Seasonal fruits, mango pulp, strawberry shake, ashta, pineapple, nuts', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 34.0 }] },
+    { id: 'zahle', name: 'Zahle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Zahle%20.png', tagline: 'Premium cocktail blend with exotic fruits and honey', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 38.0 }] },
+    { id: 'kadisza', name: 'Kadisza', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Kadisza.jpg', tagline: 'Signature mix with nuts, ashta and fresh seasonal selection', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 36.0 }] },
+    { id: 'cedry', name: 'Cedry', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cedry.png', tagline: 'Authentic taste of Lebanon with rich fruit layers', sizes: [{ label: '300ml', price: 31.0 }, { label: '500ml', price: 37.0 }] },
   ],
-  specials: [
-    { id: 'ashta-fruits', name: 'Ashta with fruits', tagline: 'Lebanese ashta cheese with fresh seasonal fruits', sizes: [{ label: '500g', price: 92.5 }] },
-    { id: 'katayef', name: 'Katayef', tagline: 'Traditional Lebanese crepes with nuts and honey', sizes: [{ label: '6 pcs', price: 36.5 }] },
+  protein_shakes: [
+    { id: 'banana_dates_boost', name: 'Banana Dates Boost', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Banana%20Dates%20Boost%20.jpg', tagline: 'Banana, dates, protein powder, milk', sizes: [{ label: 'Standard', price: 25.0 }] },
+    { id: 'chocolate_dates_delight', name: 'Chocolate Dates Delight', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Chocolate%20Dates%20Delight.jpg', tagline: 'Chocolate, dates, protein powder, milk', sizes: [{ label: 'Standard', price: 26.0 }] },
+    { id: 'coconut_almond_energy', name: 'Coconut Almond Energy', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Coconut%20Almond%20Energy.jpg', tagline: 'Coconut, almonds, protein powder, milk', sizes: [{ label: 'Standard', price: 28.0 }] },
+    { id: 'berry_fit', name: 'Berry Fit', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Berry%20Fit.jpg', tagline: 'Mixed berries, protein powder, milk', sizes: [{ label: 'Standard', price: 26.0 }] },
+    { id: 'mango_power', name: 'Mango Power', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Mango%20Power%20.jpg', tagline: 'Mango, protein powder, milk', sizes: [{ label: 'Standard', price: 27.0 }] },
+  ],
+  healthy_mixes: [
+    { id: 'kac', name: 'Kac (Hangover)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kac.jpg', tagline: 'Revitalizing mix for recovery', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'moc', name: 'Moc (Power)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/moc.jpg', tagline: 'Energy boosting blend', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'metabolizm', name: 'Metabolizm', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/metabolizm.jpg', tagline: 'Boost your metabolism naturally', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'odpornosc', name: 'Odporność (Immunity)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/odpornosc.jpg', tagline: 'Vitamins and immune support', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'cera', name: 'Cera (Skin Glowing)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cera.jpg', tagline: 'For healthy and glowing skin', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'overall_combination', name: 'Overall Combination', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/overall%20combination.jpg', tagline: 'Ultimate healthy mix', sizes: [{ label: 'Standard', price: 24.0 }] },
+    { id: 'jallab', name: 'Jallab', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jallab.jpg', tagline: 'Traditional date molasses and rose water drink', sizes: [{ label: 'Standard', price: 18.0 }] },
+  ],
+  milkshakes: [
+    { id: 'oreo_shake', name: 'Oreo Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/oreo.jpg', tagline: 'Oreo cookies, milk, vanilla ice cream', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'lotus_shake', name: 'Lotus Biscoff Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lotus.jpg', tagline: 'Lotus spread, milk, ice cream', sizes: [{ label: 'Standard', price: 24.0 }] },
+    { id: 'kitkat_shake', name: 'KitKat Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kitkat.jpg', tagline: 'KitKat chocolate, milk, ice cream', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'pistachio_shake', name: 'Pistachio Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pistacjo.jpg', tagline: 'Premium pistachio blend', sizes: [{ label: 'Standard', price: 28.0 }] },
+    { id: 'peanut_butter_shake', name: 'Peanut Butter Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/maslo%20orzechowe.jpg', tagline: 'Creamy peanut butter blend', sizes: [{ label: 'Standard', price: 23.0 }] },
   ],
   juices: [
-    { id: 'orange-juice', name: 'Orange Juice', tagline: 'Freshly squeezed orange juice', sizes: [{ label: '300ml', price: 17.5 }] },
+    { id: 'orange_juice', name: 'Fresh Orange Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pomarancza.jpg', tagline: 'Freshly squeezed', sizes: [{ label: 'Standard', price: 17.5 }] },
+    { id: 'apple_juice', name: 'Fresh Apple Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jablko.jpg', tagline: 'Freshly squeezed', sizes: [{ label: 'Standard', price: 17.5 }] },
+    { id: 'carrot_juice', name: 'Carrot Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchewka.jpg', tagline: 'Fresh carrot juice', sizes: [{ label: 'Standard', price: 16.0 }] },
+    { id: 'carrot_orange', name: 'Carrot & Orange', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchew%20pomarancz.jpg', tagline: 'Mixed fresh juice', sizes: [{ label: 'Standard', price: 18.0 }] },
+    { id: 'pomegranate_juice', name: 'Pomegranate Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/granat.jpg', tagline: 'Fresh pomegranate', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'lemonade', name: 'Classic Lemonade', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada.jpg', tagline: 'Refreshing classic lemonade', sizes: [{ label: 'Standard', price: 15.0 }] },
+    { id: 'lemonade_mint', name: 'Mint Lemonade', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada%20mieta.jpg', tagline: 'Lemonade with fresh mint leaves', sizes: [{ label: 'Standard', price: 16.0 }] },
   ],
-  lody: [
-    { id: 'lody-artisan', name: 'Artisan Ice Cream', tagline: 'Traditional homemade ice cream', sizes: [{ label: 'Standard', price: 18.0 }] },
-    { id: 'lody-dog', name: 'Ice Cream for Dogs', tagline: 'Safe & natural treat for your furry friend', sizes: [{ label: '1 Cup', price: 12.0 }] },
+  crepes: [
+    { id: 'crepe_zaatar', name: 'Labneh & Zaatar', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/labneh.jpg', tagline: 'Labneh, olive oil, zaatar, veggies', sizes: [{ label: 'Standard', price: 28.0 }] },
+    { id: 'crepe_ham', name: 'Cheese & Ham', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20ser%20zolty.jpg', tagline: 'Yellow cheese, ham, mushrooms', sizes: [{ label: 'Standard', price: 28.0 }] },
+    { id: 'crepe_mozzarella', name: 'Mozzarella', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mozarella.jpg', tagline: 'Mozzarella, oregano, mushrooms, tomatoes', sizes: [{ label: 'Standard', price: 28.0 }] },
+    { id: 'crepe_mango_mascarpone', name: 'Mango Mascarpone', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mango%20mascarpone.jpg', tagline: 'Sweet crepe with mango and mascarpone', sizes: [{ label: 'Standard', price: 26.0 }] },
+    { id: 'crepe_apple_mousse', name: 'Apple Mousse', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mus%20jalbkowy.jpg', tagline: 'Sweet crepe with apple mousse', sizes: [{ label: 'Standard', price: 24.0 }] },
+    { id: 'crepe_nutella_banana', name: 'Nutella Banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20nutella%20banana.jpg', tagline: 'Classic Nutella and banana crepe', sizes: [{ label: 'Standard', price: 25.0 }] },
+  ],
+  waffles: [
+    { id: 'waffle_mascarpone', name: 'Mascarpone Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20mascarpone.jpg', tagline: 'Mascarpone, mix fruits, honey, nuts', sizes: [{ label: 'Standard', price: 27.0 }] },
+    { id: 'waffle_whipped', name: 'Whipped Cream Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20bita%20smietana%20i%20mix%20owocow.jpg', tagline: 'Whipped cream, mix fruits, chocolate sauce', sizes: [{ label: 'Standard', price: 23.0 }] },
+    { id: 'waffle_jam', name: 'Strawberry Jam Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20dzem%20truskawky.jpg', tagline: 'Strawberry jam, whipped cream, strawberry sauce', sizes: [{ label: 'Standard', price: 23.0 }] },
+    { id: 'waffle_ashta', name: 'Ashta Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'Ashta, mix fruits, honey, mix nuts', sizes: [{ label: 'Standard', price: 28.0 }], popular: true },
+    { id: 'waffle_nutella', name: 'Nutella & Banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20nutella.jpg', tagline: 'Nutella, banana, whipped cream', sizes: [{ label: 'Standard', price: 25.0 }] },
+    { id: 'waffle_sugar', name: 'Classic Sugar Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20cuker.jpg', tagline: 'Powdered sugar', sizes: [{ label: 'Standard', price: 13.0 }] },
+  ],
+  desserts: [
+    { id: 'lody-artisan', name: 'Artisan Ice Cream', image: '', tagline: 'Delicious artisanal ice cream', sizes: [{ label: 'Standard', price: 18.0 }] },
+    { id: 'lody-dog', name: 'Ice Cream for Dogs', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/icecreamfordogs.png', tagline: 'Special dog-friendly ice cream in a cup', sizes: [{ label: '1 Cup', price: 12.0 }] },
+    { id: 'ashta-fruits', name: 'Ashta & Fruits (500g)', image: '', tagline: 'Authentic Lebanese ashta cream served with fruits', sizes: [{ label: '500g', price: 92.5 }] },
+    { id: 'katayef', name: 'Katayef', image: '', tagline: 'Traditional Lebanese stuffed pancakes', sizes: [{ label: '6 pcs', price: 36.5 }] }
+  ],
+  combo: [
+    { id: 'combo_fettuccine', name: 'Combo: Fettuccine Pancakes', image: '', tagline: 'Fresh juice or lemonade + fettuccine pancakes.', sizes: [{ label: 'Standard', price: 35.0 }] },
+  ],
+  drinks: [
+    { id: 'tea_mint', name: 'Lebanese Tea with Mint', image: '', tagline: 'Traditional hot tea', sizes: [{ label: 'Standard', price: 12.0 }] },
+    { id: 'tea_kardamon', name: 'Lebanese Tea with Kardamon', image: '', tagline: 'Traditional hot tea', sizes: [{ label: 'Standard', price: 12.0 }] },
+    { id: 'tea_winter', name: 'Polish Winter Tea', image: '', tagline: 'Warming winter tea', sizes: [{ label: 'Standard', price: 18.0 }] },
+    { id: 'coffee_lebanese', name: 'Lebanese Coffee', image: '', tagline: 'Strong traditional coffee', sizes: [{ label: 'Standard', price: 10.0 }] },
   ]
 };
 
+/* ============================================================
+   MODIFIERS
+============================================================ */
 const EXTRAS_OPTIONS = [
   { id: 'ext_aszta', name: 'Extra Ashta', price: 7.5 },
   { id: 'ext_honey', name: 'Extra Honey', price: 4.0 },
@@ -131,86 +203,82 @@ const EXTRAS_OPTIONS = [
 
 const MODIFIERS_BY_CATEGORY = {
   dairy_drink: { 
-    packaging: { name: 'Takeaway Packaging', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup (+1.50 PLN)', price: 1.5 }] }, 
+    packaging: { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup (+1.50 PLN)', price: 1.5 }] }, 
     milk: { name: 'Milk Base', required: true, multi: false, options: [{ id: 'normal', name: 'Regular', price: 0 }, { id: 'lactose_free', name: 'Lactose-free', price: 0 }, { id: 'almond', name: 'Almond', price: 3 }, { id: 'vegan', name: 'Vegan', price: 3 }], default: 'normal' },
-    extras: { name: 'Extras (Dodatki)', required: false, multi: true, options: EXTRAS_OPTIONS }
+    extras: { name: 'Extras', required: false, multi: true, options: EXTRAS_OPTIONS }
   },
   food_sweet: { 
-    packaging: { name: 'Takeaway Packaging', required: true, multi: false, options: [{ id: 'takeaway_box', name: 'Eco Box (+2.50 PLN)', price: 2.5 }] },
-    extras: { name: 'Extras (Dodatki)', required: false, multi: true, options: EXTRAS_OPTIONS }
+    packaging: { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_box', name: 'Eco Box (+2.50 PLN)', price: 2.5 }] },
+    extras: { name: 'Extras', required: false, multi: true, options: EXTRAS_OPTIONS }
+  },
+  juice_drink: {
+    packaging: { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup (+1.50 PLN)', price: 1.5 }] },
+    extras: { name: 'Extras', required: false, multi: true, options: EXTRAS_OPTIONS }
   },
   none: {},
 };
 
 function getModifiersFor(categoryId) {
-  if (['shakes', 'protein'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.dairy_drink;
-  if (['sweet_crepes', 'waffles', 'specials'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.food_sweet;
+  if (['cocktails', 'protein_shakes', 'milkshakes'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.dairy_drink;
+  if (['juices', 'healthy_mixes'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.juice_drink;
+  if (['waffles', 'crepes', 'combo', 'desserts'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.food_sweet;
   return MODIFIERS_BY_CATEGORY.none;
 }
 
 /* ============================================================
    FORMATTING & TIME ENGINE
 ============================================================ */
-const MINUTES_PER_SLOT = 15; 
-
-function roundUpToQuarter(date) { 
-  const d = new Date(date); 
-  const rem = d.getMinutes() % MINUTES_PER_SLOT; 
-  if (rem !== 0 || d.getSeconds() !== 0 || d.getMilliseconds() !== 0) { 
-    d.setMinutes(d.getMinutes() + (MINUTES_PER_SLOT - rem)); 
-  } 
-  d.setSeconds(0, 0); 
-  return d; 
-}
-
-function generateTimeSlots(baseTime) { 
-  const now = baseTime || new Date(); 
+function generateTimeSlots(baseTime) {
+  const now = baseTime || new Date();
   const earliest = new Date(now.getTime() + 60 * 60000); 
-  const firstSlot = roundUpToQuarter(earliest); 
-  const slots = []; 
-  let cursor = new Date(firstSlot); 
-  const tomorrow = new Date(now);
-  tomorrow.setDate(now.getDate() + 1);
-  tomorrow.setHours(23, 59, 59, 999);
 
-  while (slots.length < 64 && cursor <= tomorrow) { 
-    const day = cursor.getDay(); 
-    const isWeekendSpecial = (day === 5 || day === 6); 
+  const firstSlot = new Date(earliest);
+  const rem = firstSlot.getMinutes() % 15;
+  if (rem !== 0 || firstSlot.getSeconds() > 0 || firstSlot.getMilliseconds() > 0) {
+    firstSlot.setMinutes(firstSlot.getMinutes() + (15 - rem), 0, 0);
+  }
+
+  const slots = [];
+  let cursor = firstSlot;
+  const endTime = new Date(now.getTime() + 48 * 60 * 60 * 1000); 
+
+  const hourFmt = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', hour: 'numeric', hour12: false });
+  const minFmt = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', minute: 'numeric' });
+  const dayFmt = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', weekday: 'short' });
+
+  while (slots.length < 64 && cursor <= endTime) {
+    let h = parseInt(hourFmt.format(cursor), 10);
+    if (h === 24) h = 0; 
+    const m = parseInt(minFmt.format(cursor), 10);
+    const dayStr = dayFmt.format(cursor);
+
+    const isWeekendSpecial = (dayStr === 'Fri' || dayStr === 'Sat');
     const OPEN_HOUR = 10;
-    const CLOSE_HOUR = isWeekendSpecial ? 22 : 21; 
+    const CLOSE_HOUR = isWeekendSpecial ? 22 : 21;
     const START_HOUR = OPEN_HOUR + 1; 
     const END_HOUR = CLOSE_HOUR - 1;  
-    const h = cursor.getHours();
-    const m = cursor.getMinutes();
 
-    if (h < START_HOUR) {
-      cursor.setHours(START_HOUR, 0, 0, 0);
-    } else if (h > END_HOUR || (h === END_HOUR && m > 0)) {
-      cursor.setDate(cursor.getDate() + 1);
-      cursor.setHours(START_HOUR, 0, 0, 0);
-    } else {
-      if (cursor <= tomorrow) slots.push(new Date(cursor)); 
-      cursor.setMinutes(cursor.getMinutes() + 15); 
+    if (h >= START_HOUR && (h < END_HOUR || (h === END_HOUR && m === 0))) {
+      slots.push(new Date(cursor));
     }
-  } 
-  return slots; 
+    cursor = new Date(cursor.getTime() + 15 * 60000); 
+  }
+  return slots;
 }
 
-function formatSlot(date) { 
-  return date.toLocaleTimeString('en-US', { timeZone: 'Europe/Warsaw', hour: '2-digit', minute: '2-digit', hour12: false }); 
+function formatSlot(date) {
+  return new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', hour: '2-digit', minute: '2-digit', hour12: false }).format(date);
 }
 
-function formatFullSlot(date) { 
-  const t = date.toLocaleTimeString('en-US', { timeZone: 'Europe/Warsaw', hour: '2-digit', minute: '2-digit', hour12: false }); 
-  const today = new Date(); 
-  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1); 
-  const isToday = date.toDateString() === today.toDateString(); 
-  const isTomorrow = date.toDateString() === tomorrow.toDateString(); 
-  const dayLabel = isToday ? 'Today' : isTomorrow ? 'Tomorrow' : date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }); 
-  return `${dayLabel}, ${t}`; 
+function formatFullSlot(date) {
+  return new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(date);
 }
 
-function slotKey(date) { return date.toISOString().slice(0, 16); }
+function getSlotDayLabel(date) {
+  return new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', weekday: 'long', month: 'short', day: 'numeric' }).format(date);
+}
+
+function slotKey(date) { return date.toISOString(); }
 
 /* ============================================================
    DB OPERATIONS
@@ -250,10 +318,12 @@ function Button({ children, variant = 'primary', size = 'md', className = '', ..
   const style = variant === 'primary' ? { backgroundColor: BRAND.green, color: 'white' } : { borderColor: BRAND.line, color: BRAND.ink }; 
   return ( <button className={`${base} ${sizes[size]} ${className}`} style={style} {...rest}> {children} </button> ); 
 }
+
 function Badge({ children, tone = 'neutral' }) { 
   const tones = { neutral: { bg: BRAND.line, color: BRAND.ink }, gold: { bg: BRAND.gold, color: 'white' } }; 
   return ( <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ backgroundColor: tones[tone].bg, color: tones[tone].color }}> {children} </span> ); 
 }
+
 function CedarMark({ className = '', color = BRAND.green, size = 80 }) { 
   return ( <svg viewBox="0 0 100 100" width={size} height={size} className={className} style={{ color }}> <g fill="currentColor"> <path d="M50 10 L62 30 L54 30 L66 50 L58 50 L70 72 L30 72 L42 50 L34 50 L46 30 L38 30 Z" /> <rect x="47" y="72" width="6" height="16" rx="1" /> </g> </svg> ); 
 }
@@ -287,11 +357,6 @@ function TopBar({ lang, setLang }) {
         <span className="cursor-pointer flex items-center gap-1.5 hover:text-white transition">🛵 UberEats</span>
       </div>
       <div className="flex items-center gap-4">
-        <div className="hidden md:flex items-center gap-3 border-r pr-4 border-white/20">
-          <span className="cursor-pointer hover:text-white transition">FB</span>
-          <span className="cursor-pointer hover:text-white transition">IG</span>
-          <span className="cursor-pointer hover:text-white transition" title="TikTok">TK</span>
-        </div>
         <div className="flex items-center gap-2">
           <span className="mr-1">🌐</span>
           {['EN', 'PL', 'AR'].map((l) => (
@@ -341,17 +406,21 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
   } 
   
   return ( 
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60"> 
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm"> 
       <div className="absolute inset-0" onClick={onClose} /> 
       <div className="relative w-full md:max-w-lg md:mx-4 bg-white md:rounded-3xl rounded-t-3xl max-h-[92vh] flex flex-col anim-slide overflow-hidden"> 
-        <div className="relative p-6 pb-4 bg-[#F7F1E3]"> 
-          <button onClick={onClose} className={`absolute top-4 ${lang === 'AR' ? 'left-4' : 'right-4'} w-8 h-8 rounded-full flex items-center justify-center bg-white text-gray-800`}><X size={16} /></button> 
-          <div className="mt-8 text-gray-800"> 
-            <h2 className="font-display font-semibold text-2xl mb-1">{item.name}</h2> 
-            <p className="text-sm text-gray-500">{item.tagline}</p> 
-          </div> 
+        
+        <div className="relative w-full h-48 md:h-56 bg-gray-100 shrink-0">
+          <img src={item.image || `https://placehold.co/600x400/FBF9F2/7a964a?text=${encodeURIComponent(item.name)}`} alt={item.name} className="w-full h-full object-cover" />
+          <button onClick={onClose} className={`absolute top-4 ${lang === 'AR' ? 'left-4' : 'right-4'} w-8 h-8 rounded-full flex items-center justify-center bg-white/80 backdrop-blur text-gray-800 hover:bg-white transition shadow-sm`}><X size={16} /></button> 
+        </div>
+
+        <div className="px-6 pt-5 pb-2 shrink-0"> 
+          <h2 className="font-display font-semibold text-2xl mb-1">{item.name}</h2> 
+          <p className="text-sm text-gray-500">{item.tagline}</p> 
         </div> 
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6 text-gray-800"> 
+
+        <div className="flex-1 overflow-y-auto px-6 py-3 space-y-6 text-gray-800"> 
           {item.sizes.length > 1 && ( 
             <section> 
               <div className="flex items-baseline justify-between mb-2.5"> 
@@ -360,7 +429,7 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
               </div> 
               <div className="grid grid-cols-2 gap-2"> 
                 {item.sizes.map((s, i) => ( 
-                  <button key={i} onClick={() => setSizeIdx(i)} className={`rounded-xl border px-4 py-3 text-left transition ${i === sizeIdx ? 'border-[#93b45b] bg-[#93b45b]/10 text-[#7a964a]' : 'border-gray-200'}`}>
+                  <button key={i} onClick={() => setSizeIdx(i)} className={`rounded-xl border px-4 py-3 text-left transition ${i === sizeIdx ? 'border-[#93b45b] bg-[#93b45b]/10 text-[#7a964a]' : 'border-gray-200 hover:border-gray-300'}`}>
                     <div className="font-semibold">{s.label}</div>
                     <div className="text-sm opacity-80">{currency(s.price)}</div>
                   </button> 
@@ -378,7 +447,7 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
                 {group.options.map((opt) => { 
                   const selected = (mods[groupKey] || []).some((m) => m.id === opt.id); 
                   return ( 
-                    <button key={opt.id} onClick={() => toggleMod(groupKey, opt)} className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${selected ? 'border-[#93b45b] bg-[#93b45b]/5' : 'border-gray-200'}`}> 
+                    <button key={opt.id} onClick={() => toggleMod(groupKey, opt)} className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${selected ? 'border-[#93b45b] bg-[#93b45b]/5' : 'border-gray-200 hover:border-gray-300'}`}> 
                       <div className="flex items-center gap-3"> 
                         <span className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${selected ? 'bg-[#93b45b] border-[#93b45b]' : 'border-gray-300'}`}> 
                           {selected && <Check size={14} className="text-white" />} 
@@ -393,11 +462,11 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
             </section> 
           ))} 
         </div> 
-        <div className="border-t p-4 flex items-center justify-between gap-3 bg-[#F7F1E3] border-gray-200"> 
-          <div className="flex items-center rounded-full bg-white border border-gray-200"> 
-            <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-9 h-9 flex items-center justify-center text-gray-800 disabled:opacity-30" disabled={qty <= 1}><Minus size={15} /></button> 
+        <div className="border-t p-4 flex items-center justify-between gap-3 bg-white border-gray-100 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] relative z-10"> 
+          <div className="flex items-center rounded-full bg-gray-50 border border-gray-200"> 
+            <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 flex items-center justify-center text-gray-800 disabled:opacity-30" disabled={qty <= 1}><Minus size={15} /></button> 
             <span className="w-6 text-center text-sm font-semibold text-gray-800">{qty}</span> 
-            <button onClick={() => setQty(qty + 1)} className="w-9 h-9 flex items-center justify-center text-gray-800"><Plus size={15} /></button> 
+            <button onClick={() => setQty(qty + 1)} className="w-10 h-10 flex items-center justify-center text-gray-800"><Plus size={15} /></button> 
           </div> 
           <Button size="lg" onClick={handleAdd} disabled={!isValid} className="flex-1">{isValid ? `${T[lang].add} · ${currency(total)}` : T[lang].selectMissing}</Button> 
         </div> 
@@ -430,7 +499,7 @@ function CartDrawer({ open, cart, onClose, onRemove, onUpdateQty, onCheckout, la
                     {Object.values(line.mods || {}).flat().map(m => ` • ${m.name}`).join('')}
                   </div> 
                 </div> 
-                <button onClick={() => onRemove(line.lineId)} className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-red-400"><X size={14} /></button> 
+                <button onClick={() => onRemove(line.lineId)} className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-red-400 hover:bg-red-50"><X size={14} /></button> 
               </div> 
               <div className="flex items-center justify-between mt-2"> 
                 <div className="flex items-center rounded-full bg-gray-100"> 
@@ -444,7 +513,7 @@ function CartDrawer({ open, cart, onClose, onRemove, onUpdateQty, onCheckout, la
           ))} 
         </div> 
         {cart.length > 0 && ( 
-          <div className="border-t p-5 space-y-4 bg-gray-50 border-gray-200"> 
+          <div className="border-t p-5 space-y-4 bg-gray-50 border-gray-200 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]"> 
             <div className="flex justify-between items-baseline"> 
               <span className="font-display text-lg">{T[lang].pay}</span> 
               <span className="font-display text-2xl font-semibold text-[#93b45b]">{currency(subtotal)}</span> 
@@ -465,7 +534,18 @@ function CheckoutModal({ cart, onClose, onPlaced, lang, onAddUpsell, serverTime 
   const [isHuman, setIsHuman] = useState(false); 
   const [submitting, setSubmitting] = useState(false); 
   const subtotal = cart.reduce((a, l) => a + lineTotal(l), 0); 
+  
   const slots = useMemo(() => generateTimeSlots(serverTime), [serverTime]); 
+  
+  const groupedSlots = useMemo(() => {
+    return slots.reduce((acc, s) => {
+      const dayLabel = getSlotDayLabel(s);
+      if (!acc[dayLabel]) acc[dayLabel] = [];
+      acc[dayLabel].push(s);
+      return acc;
+    }, {});
+  }, [slots]);
+
   const canProceedFromStep1 = name.trim().length >= 2 && phone.trim().length >= 6; 
   
   const hasAshta = cart.some(item => item.itemId === 'ashta-fruits');
@@ -514,8 +594,16 @@ function CheckoutModal({ cart, onClose, onPlaced, lang, onAddUpsell, serverTime 
                 <div className="font-bold text-[#7a964a] mb-1">{T[lang].upsellTitle}</div>
                 <div className="text-xs text-gray-600 mb-3">{T[lang].upsellDesc}</div>
                 <div className="flex gap-2">
-                  {!hasAshta && <button onClick={() => onAddUpsell(MENU_ITEMS.specials[0], 'specials')} className="flex-1 bg-white p-2 rounded-xl border border-[#93b45b]/40 text-sm font-semibold hover:border-[#93b45b] text-[#7a964a] transition">Ashta 🍯</button>}
-                  {!hasKatayef && <button onClick={() => onAddUpsell(MENU_ITEMS.specials[1], 'specials')} className="flex-1 bg-white p-2 rounded-xl border border-[#93b45b]/40 text-sm font-semibold hover:border-[#93b45b] text-[#7a964a] transition">Katayef 🥞</button>}
+                  {!hasAshta && (
+                    <button onClick={() => onAddUpsell(MENU_ITEMS.desserts[2], 'desserts')} className="flex-1 bg-white p-2 rounded-xl border border-[#93b45b]/40 text-sm font-semibold hover:border-[#93b45b] text-[#7a964a] transition">
+                      Ashta & Fruits 🍨
+                    </button>
+                  )}
+                  {!hasKatayef && (
+                    <button onClick={() => onAddUpsell(MENU_ITEMS.desserts[3], 'desserts')} className="flex-1 bg-white p-2 rounded-xl border border-[#93b45b]/40 text-sm font-semibold hover:border-[#93b45b] text-[#7a964a] transition">
+                      Katayef 🥟
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -527,29 +615,24 @@ function CheckoutModal({ cart, onClose, onPlaced, lang, onAddUpsell, serverTime 
         
         {step === 2 && ( 
           <div className="space-y-6"> 
-            {['Today', 'Tomorrow'].map((dayGroup) => {
-              const daySlots = slots.filter(s => formatFullSlot(s).includes(dayGroup));
-              if (daySlots.length === 0) return null;
-              
-              return (
-                <div key={dayGroup} className="anim-fadeup">
-                  <h4 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-widest border-b border-gray-100 pb-2">
-                    {dayGroup === 'Today' ? 'Today / Dziś / اليوم' : 'Tomorrow / Jutro / غداً'}
-                  </h4>
-                  <div className="grid grid-cols-3 gap-3"> 
-                    {daySlots.map((slot) => { 
-                      const key = slotKey(slot); 
-                      const isSelected = chosenSlot === key; 
-                      return ( 
-                        <button key={key} onClick={() => setChosenSlot(key)} className={`py-3 rounded-xl text-center border font-semibold text-sm transition-colors ${isSelected ? 'bg-[#93b45b] text-white border-[#93b45b]' : 'bg-white hover:border-gray-300'}`}>
-                          {formatSlot(slot)}
-                        </button> 
-                      ); 
-                    })} 
-                  </div>
+            {Object.entries(groupedSlots).map(([dayLabel, daySlots]) => (
+              <div key={dayLabel} className="anim-fadeup">
+                <h4 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-widest border-b border-gray-100 pb-2">
+                  {dayLabel}
+                </h4>
+                <div className="grid grid-cols-3 gap-3"> 
+                  {daySlots.map((slot) => { 
+                    const key = slotKey(slot); 
+                    const isSelected = chosenSlot === key; 
+                    return ( 
+                      <button key={key} onClick={() => setChosenSlot(key)} className={`py-3 rounded-xl text-center border font-semibold text-sm transition-colors ${isSelected ? 'bg-[#93b45b] text-white border-[#93b45b]' : 'bg-white hover:border-gray-300'}`}>
+                        {formatSlot(slot)}
+                      </button> 
+                    ); 
+                  })} 
                 </div>
-              );
-            })}
+              </div>
+            ))}
             <Button size="lg" className="w-full mt-6" disabled={!chosenSlot} onClick={() => setStep(3)}>Next <ChevronRight size={20} /></Button> 
           </div> 
         )} 
@@ -661,33 +744,33 @@ function TrackOrderModal({ onClose, lang }) {
 }
 
 const PROMO_LIST = [
-  { ...MENU_ITEMS.lody[0], categoryId: 'lody', icon: '🍦' },
-  { ...MENU_ITEMS.lody[1], categoryId: 'lody', icon: '🐾' },
-  { ...MENU_ITEMS.specials[1], categoryId: 'specials', icon: '🥞' },
-  { ...MENU_ITEMS.specials[0], categoryId: 'specials', icon: '🍯' }
+  { id: 'lody-artisan', name: 'Artisan Ice Cream', image: '', tagline: 'Delicious artisanal ice cream', sizes: [{ label: 'Standard', price: 18.0 }], categoryId: 'desserts', icon: '🍨' },
+  { id: 'lody-dog', name: 'Ice Cream for Dogs', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/icecreamfordogs.png', tagline: 'Special dog-friendly ice cream in a cup', sizes: [{ label: '1 Cup', price: 12.0 }], categoryId: 'desserts', icon: '🐶' }
 ];
 
 function WelcomePromoModal({ onClose, onAdd, lang }) {
   const [item] = useState(() => PROMO_LIST[Math.floor(Math.random() * PROMO_LIST.length)]);
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl w-full max-w-sm p-8 relative anim-fadeup text-center shadow-2xl text-gray-800">
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 hover:text-gray-800 transition">
-          <X size={16} />
-        </button>
-        <div className="mb-4 inline-flex p-4 rounded-full bg-[#93b45b]/10 text-4xl animate-bounce border-4 border-[#93b45b]/20">
-          {item.icon}
+      <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden relative anim-fadeup text-center shadow-2xl text-gray-800 flex flex-col">
+        <div className="h-48 w-full relative bg-gray-100 shrink-0">
+          <img src={item.image || `https://placehold.co/600x400/FBF9F2/7a964a?text=${encodeURIComponent(item.name)}`} alt={item.name} className="w-full h-full object-cover" />
+          <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center bg-white/80 backdrop-blur text-gray-800 hover:bg-white transition">
+            <X size={16} />
+          </button>
         </div>
-        <h2 className="font-display text-2xl font-bold mb-1">{T[lang].promoTitle}</h2>
-        <p className="text-gray-500 text-sm mb-6">{T[lang].promoSub}</p>
-        <div className="bg-gray-50 p-4 rounded-2xl mb-6 border border-gray-100">
-           <h3 className="font-bold text-lg">{item.name}</h3>
-           <p className="text-xs text-gray-500 mt-1">{item.tagline}</p>
-           <div className="mt-2 font-display text-xl font-bold text-[#7a964a]">{item.sizes[0].price.toFixed(2)} PLN</div>
+        <div className="p-8 pt-6">
+          <h2 className="font-display text-2xl font-bold mb-1">{T[lang].promoTitle}</h2>
+          <p className="text-gray-500 text-sm mb-6">{T[lang].promoSub}</p>
+          <div className="bg-gray-50 p-4 rounded-2xl mb-6 border border-gray-100">
+             <h3 className="font-bold text-lg flex items-center justify-center gap-2">{item.icon} {item.name}</h3>
+             <p className="text-xs text-gray-500 mt-1">{item.tagline}</p>
+             <div className="mt-2 font-display text-xl font-bold text-[#7a964a]">{item.sizes[0].price.toFixed(2)} PLN</div>
+          </div>
+          <Button size="lg" className="w-full" onClick={() => { onAdd(item); onClose(); }}>
+            <Plus size={18} /> {T[lang].add}
+          </Button>
         </div>
-        <Button size="lg" className="w-full" onClick={() => { onAdd(item); onClose(); }}>
-          <Plus size={18} /> {T[lang].add}
-        </Button>
       </div>
     </div>
   );
@@ -698,7 +781,7 @@ function WelcomePromoModal({ onClose, onAdd, lang }) {
 ============================================================ */
 export default function CustomerPage() {
   const [lang, setLang] = useState('EN');
-  const [activeCat, setActiveCat] = useState('shakes');
+  const [activeCat, setActiveCat] = useState('cocktails');
   const [openItem, setOpenItem] = useState(null);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -707,15 +790,19 @@ export default function CustomerPage() {
   const [promoOpen, setPromoOpen] = useState(false); 
   const [confirmed, setConfirmed] = useState(null);
   const [serverTime, setServerTime] = useState(null);
-  const activeOrdersRef = useRef([]); 
+  const [currentUserId, setCurrentUserId] = useState(null); 
   const [toastStatus, setToastStatus] = useState(null); 
   const sectionRefs = useRef({});
-  const videoRef = useRef(null);
 
   useEffect(() => {
     const initApp = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) await supabase.auth.signInAnonymously();
+      if (!session) {
+        const { data } = await supabase.auth.signInAnonymously();
+        if (data?.user) setCurrentUserId(data.user.id);
+      } else {
+        setCurrentUserId(session.user.id);
+      }
       const { data: sTime } = await supabase.rpc('get_server_time');
       if (sTime) setServerTime(new Date(sTime));
       else setServerTime(new Date());
@@ -725,46 +812,46 @@ export default function CustomerPage() {
     return () => clearTimeout(promoTimer);
   }, []);
 
-  // MÜŞTERİ CANLI BİLDİRİM
   useEffect(() => {
-    const channel = supabase.channel('customer-orders')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, 
+    if (!currentUserId) return;
+    const channel = supabase.channel(`customer-orders-${currentUserId}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders', filter: `user_id=eq.${currentUserId}` }, 
         (payload) => {
-          if (activeOrdersRef.current.includes(payload.new.id)) {
-            if (payload.new.status === 'preparing') setToastStatus('preparing');
-            else if (payload.new.status === 'delivered') setToastStatus('delivered');
-            setTimeout(() => setToastStatus(null), 6000);
-          }
+          if (payload.new.status === 'preparing') setToastStatus('preparing');
+          else if (payload.new.status === 'delivered') setToastStatus('delivered');
+          setTimeout(() => setToastStatus(null), 6000);
         }
-      )
-      .subscribe();
+      ).subscribe();
     return () => { supabase.removeChannel(channel); }
-  }, []);
-
-  // KURŞUN GEÇİRMEZ VİDEO AUTOPLAY BAŞLATICISI
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-      videoRef.current.defaultMuted = true;
-      videoRef.current.play().catch(e => console.log("Otomatik oynatma engellendi:", e));
-    }
-  }, []);
+  }, [currentUserId]);
 
   function pickCategory(id) { 
     setActiveCat(id); 
     const el = sectionRefs.current[id]; 
     if (el) window.scrollTo({ top: el.getBoundingClientRect().top - 100, behavior: 'smooth' }); 
   }
+
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }
   
   function addToCart(line) { setCart((c) => [...c, line]); setOpenItem(null); setCartOpen(true); }
   function addQuickItem(item, categoryId) {
-    addToCart({ lineId: uid(), itemId: item.id, name: item.name, categoryId: categoryId, sizeLabel: item.sizes[0].label, unitPrice: item.sizes[0].price, mods: {}, qty: 1 });
+    const modifiers = getModifiersFor(categoryId);
+    const initMods = {};
+    Object.entries(modifiers).forEach(([key, group]) => {
+      if (group.required && !group.multi && group.default) { initMods[key] = [group.options.find(o => o.id === group.default)]; }
+      else if (group.required && group.options.length > 0) { initMods[key] = [group.options[0]]; } 
+    });
+    addToCart({ lineId: uid(), itemId: item.id, name: item.name, categoryId, sizeLabel: item.sizes[0].label, unitPrice: item.sizes[0].price, mods: initMods, qty: 1 });
   }
   function removeFromCart(lineId) { setCart((c) => c.filter((l) => l.lineId !== lineId)); }
   function updateQty(lineId, qty) { if (qty < 1) return removeFromCart(lineId); setCart((c) => c.map((l) => (l.lineId === lineId ? { ...l, qty } : l))); }
   
-  const cartCount = cart.reduce((a, l) => a + l.qty, 0);
-
   return (
     <div dir={lang === 'AR' ? 'rtl' : 'ltr'} className="font-body">
       <style>{STYLE_TAG}</style>
@@ -772,43 +859,21 @@ export default function CustomerPage() {
       {toastStatus && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 anim-fadeup w-[90%] max-w-md">
           <div className="bg-white text-gray-900 p-4 rounded-2xl shadow-2xl border-2 flex items-center gap-4" style={{ borderColor: toastStatus === 'preparing' ? '#3B82F6' : BRAND.green }}>
-            <span className="text-3xl bg-gray-50 p-2 rounded-full">
-              {toastStatus === 'preparing' ? '👨‍🍳' : '✅'}
-            </span>
-            <div className="font-semibold text-sm">
-              {toastStatus === 'preparing' ? T[lang].preparingToast : T[lang].readyToast}
-            </div>
-            <button onClick={() => setToastStatus(null)} className="ml-auto text-gray-400 hover:text-gray-800">
-              <X size={18} />
-            </button>
+            <span className="text-3xl bg-gray-50 p-2 rounded-full">{toastStatus === 'preparing' ? '👨‍🍳' : '✅'}</span>
+            <div className="font-semibold text-sm">{toastStatus === 'preparing' ? T[lang].preparingToast : T[lang].readyToast}</div>
+            <button onClick={() => setToastStatus(null)} className="ml-auto text-gray-400 hover:text-gray-800"><X size={18} /></button>
           </div>
         </div>
       )}
 
       {promoOpen && <WelcomePromoModal lang={lang} onClose={() => setPromoOpen(false)} onAdd={(item) => addQuickItem(item, item.categoryId)} />}
 
-      {/* PARALLAX HERO VİDEO ARKA PLAN */}
-      <div className="video-bg-container">
-        <video
-          ref={videoRef}
-          className="video-bg"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-        >
-          <source
-            src="https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/background/background.mp4"
-            type="video/mp4"
-          />
-        </video>
-      </div>
+      <div className="video-bg-container" dangerouslySetInnerHTML={{ __html: `<video class="video-bg" autoplay loop muted playsinline webkit-playsinline><source src="https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/background/background.mp4" type="video/mp4" /></video>` }} />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <TopBar lang={lang} setLang={setLang} />
         
-        <header className="sticky top-0 z-30 bg-black/30 backdrop-blur-md text-white px-4 py-3 shadow-sm border-b border-white/10">
+        <header className="sticky top-0 z-30 bg-black/40 backdrop-blur-md text-white px-4 py-3 shadow-sm border-b border-white/10">
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
               <CedarMark size={32} color="#E6C472" />
@@ -817,10 +882,16 @@ export default function CustomerPage() {
                 <div className="text-[10px] tracking-widest opacity-80 uppercase">Warsaw · Gagarina 31</div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button onClick={() => setTrackOpen(true)} className="hidden sm:flex relative items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border border-white/30 hover:bg-white/20 transition">
-                <Search size={16} /> {T[lang].trackOrder}
-              </button>
+
+            {/* Yeni Eklendi: Ana Navigasyon (Desktop) */}
+            <nav className="hidden md:flex items-center gap-6 font-semibold text-sm ml-8">
+               <button onClick={() => scrollToSection('menu')} className="opacity-80 hover:opacity-100 transition">{T[lang].navMenu}</button>
+               <button onClick={() => scrollToSection('about')} className="opacity-80 hover:opacity-100 transition">{T[lang].navAbout}</button>
+               <button onClick={() => scrollToSection('contact')} className="opacity-80 hover:opacity-100 transition">{T[lang].navContact}</button>
+            </nav>
+
+            <div className="flex items-center gap-3 ml-auto">
+              <button onClick={() => setTrackOpen(true)} className="hidden sm:flex relative items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border border-white/30 hover:bg-white/20 transition"><Search size={16} /> {T[lang].trackOrder}</button>
               <button onClick={() => setCartOpen(true)} className="bg-[#93b45b] text-white px-4 py-2 rounded-full flex items-center gap-2 font-bold text-sm hover:opacity-90 transition shadow-lg">
                 <ShoppingBag size={18}/>
                 <span className="hidden sm:inline">{T[lang].cart}</span>
@@ -836,44 +907,113 @@ export default function CustomerPage() {
         </section>
 
         <div className="flex-1 bg-[#FBF9F2] rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.3)] pb-20">
-          <nav className="sticky top-[60px] z-20 bg-[#FBF9F2]/90 backdrop-blur-md border-b border-gray-200 rounded-t-3xl pt-4">
-            <div className="max-w-6xl mx-auto px-4 py-3 flex overflow-x-auto gap-2 scroll-hide">
-              {CATEGORIES.map(c => (
-                <button key={c.id} onClick={() => pickCategory(c.id)} className={`shrink-0 px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition ${activeCat === c.id ? 'bg-[#93b45b] text-white shadow-md' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
-                  <span>{c.icon}</span> {lang === 'EN' ? c.name : lang === 'PL' ? c.namePl : c.nameAr}
-                </button>
-              ))}
-            </div>
-          </nav>
+          
+          <div id="menu">
+            <nav className="sticky top-[60px] z-20 bg-[#FBF9F2]/90 backdrop-blur-md border-b border-gray-200 rounded-t-3xl pt-4">
+              <div className="max-w-6xl mx-auto px-4 py-3 flex overflow-x-auto gap-2 scroll-hide">
+                {CATEGORIES.map(c => (
+                  <button key={c.id} onClick={() => pickCategory(c.id)} className={`shrink-0 px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition ${activeCat === c.id ? 'bg-[#93b45b] text-white shadow-md' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+                    <span>{c.icon}</span> {lang === 'EN' ? c.name : lang === 'PL' ? c.namePl : c.nameAr}
+                  </button>
+                ))}
+              </div>
+            </nav>
 
-          <main className="max-w-6xl mx-auto px-4 py-10 space-y-12">
-            {CATEGORIES.map(c => {
-              const items = MENU_ITEMS[c.id] || [];
-              if(items.length === 0) return null;
-              return (
-                <section key={c.id} ref={el => sectionRefs.current[c.id] = el}>
-                  <h2 className="font-display text-3xl font-bold mb-6 flex items-center gap-3 text-[#16261B]">
-                    <span className="text-2xl">{c.icon}</span> {lang === 'EN' ? c.name : lang === 'PL' ? c.namePl : c.nameAr}
-                  </h2>
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {items.map(it => (
-                      <button key={it.id} onClick={() => setOpenItem({ item: it, category: c })} className="bg-white p-4 rounded-3xl border border-gray-100 text-left hover:shadow-xl transition-all group relative overflow-hidden text-[#16261B]">
-                        <div className="flex justify-between items-start mb-2">
-                           <h3 className="font-display font-bold text-xl">{it.name}</h3>
-                           {it.popular && <Badge tone="gold">Popular</Badge>}
-                        </div>
-                        <p className="text-xs text-gray-500 line-clamp-2 mb-4">{it.tagline}</p>
-                        <div className="flex justify-between items-center">
-                          <span className="font-bold text-lg text-[#7a964a]">{currency(it.sizes[0].price)}</span>
-                          <span className="w-10 h-10 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#93b45b] group-hover:bg-[#93b45b] group-hover:text-white transition"><Plus size={20}/></span>
-                        </div>
+            <main className="max-w-6xl mx-auto px-4 py-10 space-y-12">
+              {CATEGORIES.map(c => {
+                const items = MENU_ITEMS[c.id] || [];
+                if(items.length === 0) return null;
+                return (
+                  <section key={c.id} ref={el => sectionRefs.current[c.id] = el}>
+                    <h2 className="font-display text-3xl font-bold mb-6 flex items-center gap-3 text-[#16261B]"><span className="text-2xl">{c.icon}</span> {lang === 'EN' ? c.name : lang === 'PL' ? c.namePl : c.nameAr}</h2>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {items.map(it => (
+                        <button key={it.id} onClick={() => setOpenItem({ item: it, category: c })} className="bg-white rounded-3xl border border-gray-100 text-left hover:shadow-xl transition-all group relative overflow-hidden text-[#16261B] flex flex-col h-full">
+                          <div className="w-full h-48 bg-gray-100 relative overflow-hidden shrink-0">
+                            <img src={it.image || `https://placehold.co/600x400/FBF9F2/7a964a?text=${encodeURIComponent(it.name)}`} alt={it.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            {it.popular && <div className="absolute top-3 right-3"><Badge tone="gold">Popular</Badge></div>}
+                          </div>
+                          <div className="p-5 flex flex-col flex-1 w-full">
+                            <h3 className="font-display font-bold text-xl mb-1">{it.name}</h3>
+                            <p className="text-xs text-gray-500 line-clamp-2 mb-4 flex-1">{it.tagline}</p>
+                            <div className="flex justify-between items-center w-full pt-3 border-t border-gray-50 mt-auto">
+                              <span className="font-bold text-lg text-[#7a964a]">{currency(it.sizes[0].price)}</span>
+                              <span className="w-10 h-10 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#93b45b] group-hover:bg-[#93b45b] group-hover:text-white transition"><Plus size={20}/></span>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                )
+              })}
+            </main>
+          </div>
+
+          {/* YENİ EKLENDİ: ABOUT US BÖLÜMÜ */}
+          <section id="about" className="max-w-6xl mx-auto px-4 py-16 border-t border-gray-200 mt-8">
+             <h2 className="font-display text-4xl font-bold mb-10 text-center text-[#16261B]">{T[lang].navAbout}</h2>
+             <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-gray-100 flex flex-col md:flex-row gap-10 items-center">
+                <div className="flex-1 space-y-5 text-gray-600">
+                   <h3 className="font-display text-3xl font-bold text-[#7a964a]">[Başlık Buraya Gelecek]</h3>
+                   <p className="leading-relaxed">
+                     [Hikaye ve vizyon metnini buraya ekleyeceğiz. "Gerçek Lübnan lezzetlerini Varşova'ya nasıl getirdik?" gibi kısa ve akılda kalıcı bir marka hikayesi yer alacak. Sen metni gönderdiğinde bu alanı hemen güncelleyeceğim.]
+                   </p>
+                   <p className="leading-relaxed">
+                     [Burası ikinci paragraf veya Ashta kremasının sırrı gibi detaylar için ayrılmış alan...]
+                   </p>
+                </div>
+                <div className="w-full md:w-5/12 aspect-[4/3] bg-gray-100 rounded-3xl overflow-hidden relative shadow-inner">
+                   <img src="https://placehold.co/800x600/FBF9F2/7a964a?text=About+Us+Image" className="w-full h-full object-cover" alt="About Liban Cafe" />
+                </div>
+             </div>
+          </section>
+
+          {/* YENİ EKLENDİ: CONTACT BÖLÜMÜ */}
+          <section id="contact" className="max-w-6xl mx-auto px-4 py-16 mb-12">
+             <h2 className="font-display text-4xl font-bold mb-10 text-center text-[#16261B]">{T[lang].navContact}</h2>
+             <div className="grid md:grid-cols-2 gap-8">
+                <div className="bg-white rounded-[2rem] p-8 md:p-10 shadow-xl border border-gray-100 flex flex-col justify-center space-y-8">
+                   <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><MapPin size={24} /></div>
+                      <div>
+                        <h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">{T[lang].address}</h4>
+                        <p className="font-semibold text-lg text-[#16261B]">Gagarina 31, 00-753 Warszawa</p>
+                      </div>
+                   </div>
+                   
+                   <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><Clock size={24} /></div>
+                      <div>
+                        <h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">{T[lang].openingHours}</h4>
+                        <p className="font-semibold text-[#16261B]">Mon - Thu: 11:00 - 21:00<br/>Fri - Sun: 11:00 - 22:00</p>
+                      </div>
+                   </div>
+
+                   <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><Mail size={24} /></div>
+                      <div>
+                        <h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">Contact</h4>
+                        <p className="font-semibold text-[#16261B]">+48 [Telefon Numaranız]<br/>hello@libancafe.pl</p>
+                      </div>
+                   </div>
+
+                   <div className="pt-4 border-t border-gray-100 flex items-center gap-4">
+                      <span className="font-bold text-gray-400 uppercase text-xs tracking-widest">{T[lang].followUs}</span>
+                      <button className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#93b45b] hover:text-white hover:border-[#93b45b] transition shadow-sm"><Instagram size={18} /></button>
+                      <button className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#93b45b] hover:text-white hover:border-[#93b45b] transition shadow-sm">
+                        {/* TikTok Icon SVG (Lucide'de default yoktur) */}
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
                       </button>
-                    ))}
-                  </div>
-                </section>
-              )
-            })}
-          </main>
+                   </div>
+                </div>
+                
+                <div className="bg-gray-200 rounded-[2rem] overflow-hidden min-h-[350px] shadow-inner border border-gray-100 relative">
+                   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2445.688265005934!2d21.0371302770281!3d52.20361097198126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47192df785050f21%3A0xc31481b0a8523315!2sGagarina%2031%2C%2000-753%20Warszawa!5e0!3m2!1sen!2spl!4v1700000000000!5m2!1sen!2spl" width="100%" height="100%" style={{border:0, position:'absolute', top:0, left:0}} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+             </div>
+          </section>
+
         </div>
       </div>
 
@@ -891,7 +1031,6 @@ export default function CustomerPage() {
             setCheckoutOpen(false); 
             setCart([]); 
             setConfirmed(order);
-            if (order.id) activeOrdersRef.current.push(order.id);
           }} 
         /> 
       )}
