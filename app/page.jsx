@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   ShoppingBag, Plus, Minus, X, Check, Phone, User,
-  ChevronRight, ArrowLeft, Store, Flame, ShieldCheck, Bell, Search, Clock, Package, MapPin,Camera as Instagram, Mail
+  ChevronRight, ArrowLeft, Store, Flame, ShieldCheck, Bell, Search, Clock, Package, MapPin, Mail, Globe
 } from 'lucide-react';
 import { supabase } from '../lib/supabase'; 
 
@@ -16,7 +16,7 @@ const BRAND = {
   greenSoft: '#aecd76',
   gold: '#C99A3D', goldSoft: '#E6C472', cream: '#F7F1E3',
   creamDeep: '#EFE6D2', ink: '#16261B', muted: '#6B7165',
-  line: '#E4DCC6', bg: '#000000', red: '#B4412A',
+  line: '#E4DCC6', bg: '#FBF9F2', red: '#B4412A',
 };
 
 const STYLE_TAG = `
@@ -29,12 +29,13 @@ html,body{ margin:0; padding:0; background:${BRAND.bg}; color:${BRAND.ink}; font
 .scroll-hide{ -ms-overflow-style:none; scrollbar-width:none; }
 button:focus-visible{ outline: 2px solid ${BRAND.gold}; outline-offset: 2px; border-radius: 6px; }
 
+/* KASMAYI ÖNLEYEN VİDEO GÜNCELLEMESİ */
 .video-bg-container {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   z-index: 0; 
   overflow: hidden;
   background-color: #000;
@@ -44,13 +45,6 @@ button:focus-visible{ outline: 2px solid ${BRAND.gold}; outline-offset: 2px; bor
   height: 100%;
   object-fit: cover;
   filter: brightness(0.5) contrast(1.1); 
-}
-.content-wrapper {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  background: rgba(251, 249, 242, 0.85); 
-  backdrop-filter: blur(8px); 
 }
 
 @keyframes fadeUp{ from{ opacity:0; transform:translateY(12px) } to{ opacity:1; transform:translateY(0) } }
@@ -65,50 +59,62 @@ button:focus-visible{ outline: 2px solid ${BRAND.gold}; outline-offset: 2px; bor
 const T = {
   EN: { 
     navMenu: 'Menu', navAbout: 'About Us', navContact: 'Contact',
-    cart: 'Cart', yourCart: 'Your Cart', emptyCart: 'Your cart is empty', pay: 'Total to pay', checkout: 'Proceed to Checkout', add: 'Add to Cart', size: 'Size', required: 'Required', selectMissing: 'Select required options', heroTitle: 'Lebanon captured', heroSub: 'in a glass.', heroDesc: 'Authentic Lebanese shakes with ashta, fresh fruits, nuts, and honey. Order online, choose your pickup slot, and collect straight from our store — skip the line.', preparingToast: 'Great news! Your order is now being prepared.', readyToast: 'Your order is ready for pickup! See you soon.',
+    cart: 'Cart', yourCart: 'Your Cart', emptyCart: 'Your cart is empty', pay: 'Total to pay', checkout: 'Proceed to Checkout', add: 'Add to Cart', size: 'Size', required: 'Required', selectMissing: 'Select required options', heroTitle: 'Liban w Szklance', heroSub: 'Authentic Taste.', heroDesc: 'Lebanese shakes with ashta, fresh fruits, nuts, and honey. Order online, choose your pickup slot, and collect straight from our store — skip the line.', readyToast: 'Your order is ready for pickup! See you soon.',
     trackOrder: 'Track Order', trackTitle: 'Track Your Order', phoneLabel: 'Phone Number', checkStatus: 'Check Status', notFound: 'No recent orders found for this number.', status_new: 'Order Received', status_preparing: 'Preparing', status_delivered: 'Delivered',
-    promoTitle: 'Specially for You!', promoSub: 'Treat yourself to something sweet today.', upsellTitle: 'Complete your order', upsellDesc: "Haven't tried our authentic Lebanese desserts yet?", extras: 'Extras',
+    promoTitle: 'Specially for You!', promoSub: 'Treat yourself to something sweet today.', upsellTitle: 'Complete your order', upsellDesc: "Haven't tried our authentic Lebanese desserts yet?", extras: 'Extras', bag: 'Takeaway Bag',
     capacityError: 'Sorry, this time slot is full. Please choose another one.',
     callMessage: 'Our staff will call you shortly to confirm your order.',
     generalError: 'Something went wrong. Please try again.',
     authError: 'Authentication error. Please refresh the page.',
-    address: 'Address', openingHours: 'Opening Hours', followUs: 'Follow Us'
+    address: 'Address', openingHours: 'Opening Hours', followUs: 'Follow Us',
+    aboutP1: 'Liban w Szklance was born from a deep love for Lebanese culture, flavors, and hospitality. Inspired by family traditions and the freshness of homemade drinks, we created a modern place where authentic taste meets careful craftsmanship.',
+    aboutP2: 'At the heart of what we do is quality. We select our ingredients with attention and prepare every drink with care, focusing on balance, freshness, and natural flavor. No shortcuts — just honest recipes inspired by Lebanese roots.',
+    aboutP3: 'For us, Liban w Szklance is more than a drink shop. It is a welcoming space where every customer is treated like a guest and every glass is prepared with intention. Whether you are stopping by for a quick refreshment or discovering our flavors for the first time, we want each visit to be a pleasant and memorable experience.',
+    aboutP4: 'We are proud of our identity, inspired by tradition and shaped by modern taste. Our mission is simple: to bring freshness, quality, and a piece of Lebanon into every glass.'
   },
   PL: { 
     navMenu: 'Menu', navAbout: 'O Nas', navContact: 'Kontakt',
-    cart: 'Koszyk', yourCart: 'Twój koszyk', emptyCart: 'Twój koszyk jest pusty', pay: 'Do zapłaty', checkout: 'Przejdź do odbioru', add: 'Dodaj do koszyka', size: 'Rozmiar', required: 'Wymagane', selectMissing: 'Wybierz wymagane opcje', heroTitle: 'Liban zaklęty', heroSub: 'w szklance.', heroDesc: 'Autentyczne libańskie koktajle z serkiem aszta, świeżymi owocami, orzechami i miodem. Zamów online, wybierz slot odbioru i odbierz prosto z naszego lokalu — bez kolejek.', preparingToast: 'Świetna wiadomość! Twoje zamówienie jest przygotowywane.', readyToast: 'Twoje zamówienie jest gotowe do odbioru! Do zobaczenia.',
+    cart: 'Koszyk', yourCart: 'Twój koszyk', emptyCart: 'Twój koszyk jest pusty', pay: 'Do zapłaty', checkout: 'Przejdź do odbioru', add: 'Dodaj do koszyka', size: 'Rozmiar', required: 'Wymagane', selectMissing: 'Wybierz wymagane opcje', heroTitle: 'Liban w Szklance', heroSub: 'Autentyczny Smak.', heroDesc: 'Libańskie koktajle z serkiem aszta, świeżymi owocami, orzechami i miodem. Zamów online, wybierz slot odbioru i odbierz prosto z naszego lokalu — bez kolejek.', readyToast: 'Twoje zamówienie jest gotowe do odbioru! Do zobaczenia.',
     trackOrder: 'Śledź Zamówienie', trackTitle: 'Śledź swoje zamówienie', phoneLabel: 'Numer telefonu', checkStatus: 'Sprawdź status', notFound: 'Brak aktywnych zamówień dla tego numeru.', status_new: 'Przyjęte', status_preparing: 'W przygotowaniu', status_delivered: 'Odebrane',
-    promoTitle: 'Specjalnie dla Ciebie!', promoSub: 'Pozwól sobie na coś słodkiego.', upsellTitle: 'Uzupełnij zamówienie', upsellDesc: 'Może dodasz te libańskie klasyki?', extras: 'Dodatki',
+    promoTitle: 'Specjalnie dla Ciebie!', promoSub: 'Pozwól sobie na coś słodkiego.', upsellTitle: 'Uzupełnij zamówienie', upsellDesc: 'Może dodasz te libańskie klasyki?', extras: 'Dodatki', bag: 'Torba na wynos',
     capacityError: 'Przepraszamy, ten slot czasowy jest pełny. Wybierz inny.',
     callMessage: 'Nasz personel skontaktuje się z Tobą telefonicznie w celu potwierzenia zamówienia.',
-    generalError: 'Coś poszło ne tak. Spróbuj ponownie.',
+    generalError: 'Coś poszło nie tak. Spróbuj ponownie.',
     authError: 'Błąd uwierzytelniania. Odśwież stronę.',
-    address: 'Adres', openingHours: 'Godziny Otwarcia', followUs: 'Śledź Nas'
+    address: 'Adres', openingHours: 'Godziny Otwarcia', followUs: 'Śledź Nas',
+    aboutP1: 'Liban w Szklance narodził się z głębokiej miłości do libańskiej kultury, smaków i gościnności. Zainspirowani rodzinnymi tradycjami i świeżością domowych napojów, stworzyliśmy nowoczesne miejsce, w którym autentyczny smak spotyka się z dbałością o rzemiosło.',
+    aboutP2: 'W sercu tego, co robimy, leży jakość. Z uwagą dobieramy składniki i z troską przygotowujemy każdy napój, stawiając na równowagę, świeżość i naturalny smak. Bez dróg na skróty — tylko uczciwe przepisy inspirowane libańskimi korzeniami.',
+    aboutP3: 'Dla nas Liban w Szklance to coś więcej niż sklep z napojami. To przyjazna przestrzeń, w której każdy klient traktowany jest jak gość, a każda szklanka przygotowywana jest z intencją. Niezależnie od tego, czy wpadasz na szybkie orzeźwienie, czy po raz pierwszy odkrywasz nasze smaki, chcemy, aby każda wizyta była przyjemnym i niezapomnianym przeżyciem.',
+    aboutP4: 'Jesteśmy dumni z naszej tożsamości, czerpiącej z tradycji i ukształtowanej przez nowoczesny smak. Nasza misja jest prosta: dostarczać świeżość, jakość i kawałek Libanu w każdej szklance.'
   },
   AR: { 
     navMenu: 'القائمة', navAbout: 'من نحن', navContact: 'اتصل بنا',
-    cart: 'عربة التسوق', yourCart: 'عربة التسوق الخاصة بك', emptyCart: 'عربة التسوق فارغة', pay: 'المجموع', checkout: 'الذهاب للدفع', add: 'أضف إلى السلة', size: 'الحجم', required: 'مطلوب', selectMissing: 'حدد الخيارات المطلوبة', heroTitle: 'لبنان مسحور', heroSub: 'في كأس.', heroDesc: 'مخفوق لبناني أصيل مع قشطة، فواكه طازجة، مكسرات وعسل. اطلب عبر الإنترنت، اختر وقت الاستلام، واستلم من متجرنا مباشرة — بدون طوابير.', preparingToast: 'أخبار رائعة! يتم تحضير طلبك الآن.', readyToast: 'طلبك جاهز للاستلام! نراك قريباً.',
+    cart: 'عربة التسوق', yourCart: 'عربة التسوق الخاصة بك', emptyCart: 'عربة التسوق فارغة', pay: 'المجموع', checkout: 'الذهاب للدفع', add: 'أضف إلى السلة', size: 'الحجم', required: 'مطلوب', selectMissing: 'حدد الخيارات المطلوبة', heroTitle: 'Liban w Szklance', heroSub: 'طعم أصيل.', heroDesc: 'مخفوق لبناني أصيل مع قشطة، فواكه طازجة، مكسرات وعسل. اطلب عبر الإنترنت، اختر وقت الاستلام، واستلم من متجرنا مباشرة — بدون طوابير.', readyToast: 'طلبك جاهز للاستلام! نراك قريباً.',
     trackOrder: 'تتبع الطلب', trackTitle: 'تتبع طلبك', phoneLabel: 'رقم الهاتف', checkStatus: 'تحقق من الحالة', notFound: 'لم يتم العثور على طلبات نشطة لهذا الرقم.', status_new: 'تم الاستلام', status_preparing: 'قيد التحضير', status_delivered: 'تم التسليم',
-    promoTitle: 'خصيصا لك!', promoSub: 'دلل نفسك بشيء حلو اليوم.', upsellTitle: 'أكمل طلبك', upsellDesc: 'ما رأيك في إضافة هذه الكلاسيكيات اللبنانية؟', extras: 'إضافات',
+    promoTitle: 'خصيصا لك!', promoSub: 'دلل نفسك بشيء حلو اليوم.', upsellTitle: 'أكمل طلبك', upsellDesc: 'ما رأيك في إضافة هذه الكلاسيكيات اللبنانية؟', extras: 'إضافات', bag: 'حقيبة العودة',
     capacityError: 'عذرًا، هذه الفترة الزمنية ممتلئة. يرجى اختيار واحدة أخرى.',
     callMessage: 'سيتصل بك موظفونا قريبًا لتأكيد طلبك.',
     generalError: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
     authError: 'خطأ في المصادقة. يرجى تحديث الصفحة.',
-    address: 'العنوان', openingHours: 'ساعات العمل', followUs: 'تابعنا'
+    address: 'العنوان', openingHours: 'ساعات العمل', followUs: 'تابعنا',
+    aboutP1: 'ولد "ليبان في الكأس" (Liban w Szklance) من حب عميق للثقافة والنكهات والضيافة اللبنانية. مستوحى من التقاليد العائلية ونضارة المشروبات محلية الصنع، أنشأنا مكانًا حديثًا يلتقي فيه الذوق الأصيل بالحرفية الدقيقة.',
+    aboutP2: 'الجودة هي في صميم ما نقوم به. نختار مكوناتنا بعناية ونحضر كل مشروب باهتمام، مع التركيز على التوازن والنضارة والنكهة الطبيعية. لا توجد طرق مختصرة - فقط وصفات صادقة مستوحاة من الجذور اللبنانية.',
+    aboutP3: 'بالنسبة لنا، نحن أكثر من مجرد متجر للمشروبات. إنه مساحة ترحيبية يُعامل فيها كل عميل كضيف ويتم إعداد كل كأس بنية صادقة. سواء كنت تتوقف لتناول مرطبات سريعة أو تكتشف نكهاتنا لأول مرة، نريد أن تكون كل زيارة تجربة ممتعة لا تُنسى.',
+    aboutP4: 'نحن فخورون بهويتنا، المستوحاة من التقاليد والتي شكلها الذوق الحديث. مهمتنا بسيطة: تقديم النضارة والجودة وقطعة من لبنان في كل كأس.'
   },
 };
 
 /* ============================================================
-   MENU DATA
+   MENU DATA (GÜNCELLENDİ)
 ============================================================ */
 const CATEGORIES = [
   { id: 'cocktails', name: 'Lebanese Cocktails', namePl: 'Libańskie Koktajle', nameAr: 'كوكتيلات لبنانية', icon: '🍹' },
   { id: 'protein_shakes', name: 'Protein Shakes', namePl: 'Szejki Białkowe', nameAr: 'مخفوق البروتين', icon: '💪' },
   { id: 'healthy_mixes', name: 'Healthy Mixes', namePl: 'Zdrowe Miksy', nameAr: 'خلطات صحية', icon: '🍏' },
-  { id: 'milkshakes', name: 'Milkshakes', namePl: 'Szejki Mleczne', nameAr: 'ميلك شيك', icon: '🥤' },
   { id: 'juices', name: 'Fresh Juices & Lemonade', namePl: 'Świeże Soki i Lemoniady', nameAr: 'عصائر طازجة', icon: '🍊' },
   { id: 'waffles', name: 'Waffles', namePl: 'Gofry', nameAr: 'وافل', icon: '🧇' },
-  { id: 'crepes', name: 'Crepes', namePl: 'Naleśniki', nameAr: 'كريب', icon: '🥞' },
+  { id: 'savory_crepes', name: 'Savory Crepes', namePl: 'Słone Naleśniki', nameAr: 'كريب مالح', icon: '🌮' },
+  { id: 'sweet_crepes', name: 'Sweet Crepes', namePl: 'Słodkie Naleśniki', nameAr: 'كريب حلو', icon: '🥞' },
   { id: 'desserts', name: 'Ice Cream & Desserts', namePl: 'Lody i Desery', nameAr: 'آيس كريم وحلويات', icon: '🍨' },
   { id: 'combo', name: 'Combo', namePl: 'Combo', nameAr: 'كومبو', icon: '🎁' },
   { id: 'drinks', name: 'Tea & Coffee', namePl: 'Kawa i Herbata', nameAr: 'شاي وقهوة', icon: '☕' },
@@ -139,15 +145,7 @@ const MENU_ITEMS = {
     { id: 'metabolizm', name: 'Metabolizm', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/metabolizm.jpg', tagline: 'Boost your metabolism naturally', sizes: [{ label: 'Standard', price: 22.0 }] },
     { id: 'odpornosc', name: 'Odporność (Immunity)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/odpornosc.jpg', tagline: 'Vitamins and immune support', sizes: [{ label: 'Standard', price: 22.0 }] },
     { id: 'cera', name: 'Cera (Skin Glowing)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cera.jpg', tagline: 'For healthy and glowing skin', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'overall_combination', name: 'Overall Combination', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/overall%20combination.jpg', tagline: 'Ultimate healthy mix', sizes: [{ label: 'Standard', price: 24.0 }] },
     { id: 'jallab', name: 'Jallab', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jallab.jpg', tagline: 'Traditional date molasses and rose water drink', sizes: [{ label: 'Standard', price: 18.0 }] },
-  ],
-  milkshakes: [
-    { id: 'oreo_shake', name: 'Oreo Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/oreo.jpg', tagline: 'Oreo cookies, milk, vanilla ice cream', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'lotus_shake', name: 'Lotus Biscoff Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lotus.jpg', tagline: 'Lotus spread, milk, ice cream', sizes: [{ label: 'Standard', price: 24.0 }] },
-    { id: 'kitkat_shake', name: 'KitKat Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kitkat.jpg', tagline: 'KitKat chocolate, milk, ice cream', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'pistachio_shake', name: 'Pistachio Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pistacjo.jpg', tagline: 'Premium pistachio blend', sizes: [{ label: 'Standard', price: 28.0 }] },
-    { id: 'peanut_butter_shake', name: 'Peanut Butter Shake', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/maslo%20orzechowe.jpg', tagline: 'Creamy peanut butter blend', sizes: [{ label: 'Standard', price: 23.0 }] },
   ],
   juices: [
     { id: 'orange_juice', name: 'Fresh Orange Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pomarancza.jpg', tagline: 'Freshly squeezed', sizes: [{ label: 'Standard', price: 17.5 }] },
@@ -158,13 +156,22 @@ const MENU_ITEMS = {
     { id: 'lemonade', name: 'Classic Lemonade', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada.jpg', tagline: 'Refreshing classic lemonade', sizes: [{ label: 'Standard', price: 15.0 }] },
     { id: 'lemonade_mint', name: 'Mint Lemonade', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada%20mieta.jpg', tagline: 'Lemonade with fresh mint leaves', sizes: [{ label: 'Standard', price: 16.0 }] },
   ],
-  crepes: [
+  savory_crepes: [
     { id: 'crepe_zaatar', name: 'Labneh & Zaatar', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/labneh.jpg', tagline: 'Labneh, olive oil, zaatar, veggies', sizes: [{ label: 'Standard', price: 28.0 }] },
     { id: 'crepe_ham', name: 'Cheese & Ham', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20ser%20zolty.jpg', tagline: 'Yellow cheese, ham, mushrooms', sizes: [{ label: 'Standard', price: 28.0 }] },
     { id: 'crepe_mozzarella', name: 'Mozzarella', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mozarella.jpg', tagline: 'Mozzarella, oregano, mushrooms, tomatoes', sizes: [{ label: 'Standard', price: 28.0 }] },
+  ],
+  sweet_crepes: [
     { id: 'crepe_mango_mascarpone', name: 'Mango Mascarpone', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mango%20mascarpone.jpg', tagline: 'Sweet crepe with mango and mascarpone', sizes: [{ label: 'Standard', price: 26.0 }] },
     { id: 'crepe_apple_mousse', name: 'Apple Mousse', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mus%20jalbkowy.jpg', tagline: 'Sweet crepe with apple mousse', sizes: [{ label: 'Standard', price: 24.0 }] },
     { id: 'crepe_nutella_banana', name: 'Nutella Banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20nutella%20banana.jpg', tagline: 'Classic Nutella and banana crepe', sizes: [{ label: 'Standard', price: 25.0 }] },
+    
+    // Eski Milkshake'ler Artık Tatlı Krep Olarak Burada:
+    { id: 'oreo_shake', name: 'Oreo', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/oreo.jpg', tagline: 'Oreo cookies and sweet cream', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'lotus_shake', name: 'Lotus Biscoff', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lotus.jpg', tagline: 'Lotus spread and sweet cream', sizes: [{ label: 'Standard', price: 24.0 }] },
+    { id: 'kitkat_shake', name: 'KitKat', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kitkat.jpg', tagline: 'KitKat chocolate and sweet cream', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'pistachio_shake', name: 'Pistachio', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pistacjo.jpg', tagline: 'Premium pistachio blend', sizes: [{ label: 'Standard', price: 28.0 }] },
+    { id: 'peanut_butter_shake', name: 'Peanut Butter', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/maslo%20orzechowe.jpg', tagline: 'Creamy peanut butter blend', sizes: [{ label: 'Standard', price: 23.0 }] },
   ],
   waffles: [
     { id: 'waffle_mascarpone', name: 'Mascarpone Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20mascarpone.jpg', tagline: 'Mascarpone, mix fruits, honey, nuts', sizes: [{ label: 'Standard', price: 27.0 }] },
@@ -192,7 +199,7 @@ const MENU_ITEMS = {
 };
 
 /* ============================================================
-   MODIFIERS
+   MODIFIERS & PACKAGING LOGIC
 ============================================================ */
 const EXTRAS_OPTIONS = [
   { id: 'ext_aszta', name: 'Extra Ashta', price: 7.5 },
@@ -201,27 +208,51 @@ const EXTRAS_OPTIONS = [
   { id: 'ext_fruits', name: 'Extra Fruits', price: 6.0 },
 ];
 
+const BAG_OPTIONS = [
+  { id: 'bag_small', name: 'Paper Bag Small (+1.00 PLN)', price: 1.0 },
+  { id: 'bag_large', name: 'Paper Bag Big (+2.00 PLN)', price: 2.0 },
+];
+
 const MODIFIERS_BY_CATEGORY = {
   dairy_drink: { 
     packaging: { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup (+1.50 PLN)', price: 1.5 }] }, 
-    milk: { name: 'Milk Base', required: true, multi: false, options: [{ id: 'normal', name: 'Regular', price: 0 }, { id: 'lactose_free', name: 'Lactose-free', price: 0 }, { id: 'almond', name: 'Almond', price: 3 }, { id: 'vegan', name: 'Vegan', price: 3 }], default: 'normal' },
+    milk: { name: 'Milk Base', required: true, multi: false, options: [
+      { id: 'normal', name: 'Regular', price: 0 }, 
+      { id: 'lactose_free', name: 'Lactose-free', price: 0 }, 
+      { id: 'oat', name: 'Oat Milk (+8.00 PLN)', price: 8 }, 
+      { id: 'almond', name: 'Almond Milk (+8.00 PLN)', price: 8 }, 
+      { id: 'coconut', name: 'Coconut Milk (+8.00 PLN)', price: 8 }
+    ], default: 'normal' },
+    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
     extras: { name: 'Extras', required: false, multi: true, options: EXTRAS_OPTIONS }
   },
-  food_sweet: { 
-    packaging: { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_box', name: 'Eco Box (+2.50 PLN)', price: 2.5 }] },
-    extras: { name: 'Extras', required: false, multi: true, options: EXTRAS_OPTIONS }
-  },
+  
   juice_drink: {
     packaging: { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup (+1.50 PLN)', price: 1.5 }] },
+    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
     extras: { name: 'Extras', required: false, multi: true, options: EXTRAS_OPTIONS }
   },
+
+  food_sweet: { 
+    packaging: { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_box', name: 'Eco Box (+2.50 PLN)', price: 2.5 }] },
+    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
+    extras: { name: 'Extras', required: false, multi: true, options: EXTRAS_OPTIONS }
+  },
+
+  ice_cream: {
+    packaging: { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup (+1.50 PLN)', price: 1.5 }] },
+    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
+    extras: { name: 'Extras', required: false, multi: true, options: EXTRAS_OPTIONS }
+  },
+  
   none: {},
 };
 
-function getModifiersFor(categoryId) {
-  if (['cocktails', 'protein_shakes', 'milkshakes'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.dairy_drink;
-  if (['juices', 'healthy_mixes'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.juice_drink;
-  if (['waffles', 'crepes', 'combo', 'desserts'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.food_sweet;
+function getModifiersFor(categoryId, itemId) {
+  if (itemId === 'lody-artisan' || itemId === 'lody-dog') return MODIFIERS_BY_CATEGORY.ice_cream;
+  if (['protein_shakes'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.dairy_drink;
+  if (['cocktails', 'juices', 'healthy_mixes', 'drinks'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.juice_drink;
+  if (['waffles', 'savory_crepes', 'sweet_crepes', 'combo', 'desserts'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.food_sweet;
   return MODIFIERS_BY_CATEGORY.none;
 }
 
@@ -352,13 +383,24 @@ function TopBar({ lang, setLang }) {
   return (
     <div className="text-[11px] font-semibold py-2 px-4 flex justify-between items-center z-40 relative border-b bg-black/40 backdrop-blur-sm text-[#F7F1E3] border-white/10">
       <div className="flex items-center gap-3 md:gap-5">
-        <span className="cursor-pointer flex items-center gap-1.5 hover:text-white transition">🛵 Wolt</span>
-        <span className="cursor-pointer flex items-center gap-1.5 hover:text-white transition">🛵 Bolt</span>
-        <span className="cursor-pointer flex items-center gap-1.5 hover:text-white transition">🛵 UberEats</span>
+        <a href="https://wolt.com/en/pol/warsaw/restaurant/liban-w-szklance" target="_blank" rel="noopener noreferrer" className="cursor-pointer flex items-center gap-1.5 hover:text-[#00c8ff] transition">
+          <span className="bg-[#00c8ff]/20 text-[#00c8ff] p-1 rounded-md"><ShoppingBag size={12} /></span> Wolt
+        </a>
+        <a href="https://glovoapp.com/en/pl/warszawa/stores/liban-w-szklance-waw" target="_blank" rel="noopener noreferrer" className="cursor-pointer flex items-center gap-1.5 hover:text-[#ffc244] transition">
+          <span className="bg-[#34d186]/20 text-[#34d186] p-1 rounded-md"><ShoppingBag size={12} /></span> Glovo
+        </a>
+        <a href="https://www.ubereats.com/pl/store/liban-w-szklance/NySG0olXWqK8SdP995XkzA" target="_blank" rel="noopener noreferrer" className="cursor-pointer flex items-center gap-1.5 hover:text-[#06c167] transition">
+          <span className="bg-[#06c167]/20 text-[#06c167] p-1 rounded-md"><ShoppingBag size={12} /></span> UberEats
+        </a>
+        <a href="https://www.instagram.com/libanwszklance/" target="_blank" rel="noopener noreferrer" className="cursor-pointer flex items-center gap-1.5 hover:text-[#E4405F] transition border-l border-white/10 pl-3 md:pl-5">
+          <span className="bg-[#E4405F]/20 text-[#E4405F] p-1 rounded-md">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </span> Instagram
+        </a>
       </div>
-      <div className="flex items-center gap-4">
+         <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <span className="mr-1">🌐</span>
+          <Globe size={14} className="opacity-70" /> 
           {['EN', 'PL', 'AR'].map((l) => (
             <button key={l} className={`transition ${lang === l ? 'text-white underline' : 'opacity-70 hover:opacity-100'}`} onClick={() => setLang(l)}>{l}</button>
           ))}
@@ -369,7 +411,7 @@ function TopBar({ lang, setLang }) {
 }
 
 function ItemModal({ item, category, onClose, onAdd, lang }) { 
-  const modifiers = useMemo(() => getModifiersFor(category.id), [category.id]); 
+  const modifiers = useMemo(() => getModifiersFor(category.id, item.id), [category.id, item.id]); 
   const [sizeIdx, setSizeIdx] = useState(0); 
   const [qty, setQty] = useState(1); 
   const [mods, setMods] = useState(() => { 
@@ -440,7 +482,7 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
           {Object.entries(modifiers).map(([groupKey, group]) => ( 
             <section key={groupKey}> 
               <div className="flex items-baseline justify-between mb-2.5"> 
-                <h4 className="font-semibold text-sm">{groupKey === 'extras' ? T[lang].extras || group.name : group.name}</h4> 
+                <h4 className="font-semibold text-sm">{groupKey === 'extras' ? T[lang].extras : groupKey === 'bag' ? T[lang].bag : group.name}</h4> 
                 {group.required && <span className="text-[10px] uppercase tracking-wide font-bold text-red-500">{T[lang].required}</span>} 
               </div> 
               <div className="space-y-2"> 
@@ -817,8 +859,7 @@ export default function CustomerPage() {
     const channel = supabase.channel(`customer-orders-${currentUserId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders', filter: `user_id=eq.${currentUserId}` }, 
         (payload) => {
-          if (payload.new.status === 'preparing') setToastStatus('preparing');
-          else if (payload.new.status === 'delivered') setToastStatus('delivered');
+          if (payload.new.status === 'delivered') setToastStatus('delivered');
           setTimeout(() => setToastStatus(null), 6000);
         }
       ).subscribe();
@@ -841,7 +882,7 @@ export default function CustomerPage() {
   
   function addToCart(line) { setCart((c) => [...c, line]); setOpenItem(null); setCartOpen(true); }
   function addQuickItem(item, categoryId) {
-    const modifiers = getModifiersFor(categoryId);
+    const modifiers = getModifiersFor(categoryId, item.id);
     const initMods = {};
     Object.entries(modifiers).forEach(([key, group]) => {
       if (group.required && !group.multi && group.default) { initMods[key] = [group.options.find(o => o.id === group.default)]; }
@@ -858,9 +899,9 @@ export default function CustomerPage() {
 
       {toastStatus && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 anim-fadeup w-[90%] max-w-md">
-          <div className="bg-white text-gray-900 p-4 rounded-2xl shadow-2xl border-2 flex items-center gap-4" style={{ borderColor: toastStatus === 'preparing' ? '#3B82F6' : BRAND.green }}>
-            <span className="text-3xl bg-gray-50 p-2 rounded-full">{toastStatus === 'preparing' ? '👨‍🍳' : '✅'}</span>
-            <div className="font-semibold text-sm">{toastStatus === 'preparing' ? T[lang].preparingToast : T[lang].readyToast}</div>
+          <div className="bg-white text-gray-900 p-4 rounded-2xl shadow-2xl border-2 flex items-center gap-4" style={{ borderColor: BRAND.green }}>
+            <span className="text-3xl bg-gray-50 p-2 rounded-full">✅</span>
+            <div className="font-semibold text-sm">{T[lang].readyToast}</div>
             <button onClick={() => setToastStatus(null)} className="ml-auto text-gray-400 hover:text-gray-800"><X size={18} /></button>
           </div>
         </div>
@@ -875,15 +916,19 @@ export default function CustomerPage() {
         
         <header className="sticky top-0 z-30 bg-black/40 backdrop-blur-md text-white px-4 py-3 shadow-sm border-b border-white/10">
           <div className="max-w-6xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <CedarMark size={32} color="#E6C472" />
+            {/* GİZLİ YUKARI ÇIK BUTONU BURADA EKLENDİ */}
+            <div 
+              className="flex items-center gap-3 cursor-pointer group"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              title="Go to Top"
+            >
+              <CedarMark size={32} color="#E6C472" className="group-hover:scale-105 transition-transform" />
               <div>
-                <div className="font-display font-bold text-xl leading-none">Liban Cafe</div>
+                <div className="font-display font-bold text-xl leading-none group-hover:text-[#E6C472] transition-colors">Liban w Szklance</div>
                 <div className="text-[10px] tracking-widest opacity-80 uppercase">Warsaw · Gagarina 31</div>
               </div>
             </div>
 
-            {/* Yeni Eklendi: Ana Navigasyon (Desktop) */}
             <nav className="hidden md:flex items-center gap-6 font-semibold text-sm ml-8">
                <button onClick={() => scrollToSection('menu')} className="opacity-80 hover:opacity-100 transition">{T[lang].navMenu}</button>
                <button onClick={() => scrollToSection('about')} className="opacity-80 hover:opacity-100 transition">{T[lang].navAbout}</button>
@@ -950,26 +995,22 @@ export default function CustomerPage() {
             </main>
           </div>
 
-          {/* YENİ EKLENDİ: ABOUT US BÖLÜMÜ */}
           <section id="about" className="max-w-6xl mx-auto px-4 py-16 border-t border-gray-200 mt-8">
              <h2 className="font-display text-4xl font-bold mb-10 text-center text-[#16261B]">{T[lang].navAbout}</h2>
              <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-gray-100 flex flex-col md:flex-row gap-10 items-center">
-                <div className="flex-1 space-y-5 text-gray-600">
-                   <h3 className="font-display text-3xl font-bold text-[#7a964a]">[Başlık Buraya Gelecek]</h3>
-                   <p className="leading-relaxed">
-                     [Hikaye ve vizyon metnini buraya ekleyeceğiz. "Gerçek Lübnan lezzetlerini Varşova'ya nasıl getirdik?" gibi kısa ve akılda kalıcı bir marka hikayesi yer alacak. Sen metni gönderdiğinde bu alanı hemen güncelleyeceğim.]
-                   </p>
-                   <p className="leading-relaxed">
-                     [Burası ikinci paragraf veya Ashta kremasının sırrı gibi detaylar için ayrılmış alan...]
-                   </p>
+                <div className="flex-1 space-y-5 text-gray-600 text-justify md:text-left">
+                   <h3 className="font-display text-3xl font-bold text-[#7a964a]">Liban w Szklance</h3>
+                   <p className="leading-relaxed">{T[lang].aboutP1}</p>
+                   <p className="leading-relaxed">{T[lang].aboutP2}</p>
+                   <p className="leading-relaxed">{T[lang].aboutP3}</p>
+                   <p className="leading-relaxed font-semibold text-gray-800">{T[lang].aboutP4}</p>
                 </div>
                 <div className="w-full md:w-5/12 aspect-[4/3] bg-gray-100 rounded-3xl overflow-hidden relative shadow-inner">
-                   <img src="https://placehold.co/800x600/FBF9F2/7a964a?text=About+Us+Image" className="w-full h-full object-cover" alt="About Liban Cafe" />
+                   <img src="https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/batroun.png" className="w-full h-full object-cover" alt="Liban w Szklance" />
                 </div>
              </div>
           </section>
 
-          {/* YENİ EKLENDİ: CONTACT BÖLÜMÜ */}
           <section id="contact" className="max-w-6xl mx-auto px-4 py-16 mb-12">
              <h2 className="font-display text-4xl font-bold mb-10 text-center text-[#16261B]">{T[lang].navContact}</h2>
              <div className="grid md:grid-cols-2 gap-8">
@@ -994,22 +1035,20 @@ export default function CustomerPage() {
                       <div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><Mail size={24} /></div>
                       <div>
                         <h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">Contact</h4>
-                        <p className="font-semibold text-[#16261B]">+48 [Telefon Numaranız]<br/>hello@libancafe.pl</p>
+                        <p className="font-semibold text-[#16261B]">+48 530 22 999<br/>libanwszklance@libanwszklance.pl</p>
                       </div>
                    </div>
 
                    <div className="pt-4 border-t border-gray-100 flex items-center gap-4">
                       <span className="font-bold text-gray-400 uppercase text-xs tracking-widest">{T[lang].followUs}</span>
-                      <button className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#93b45b] hover:text-white hover:border-[#93b45b] transition shadow-sm"><Instagram size={18} /></button>
-                      <button className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#93b45b] hover:text-white hover:border-[#93b45b] transition shadow-sm">
-                        {/* TikTok Icon SVG (Lucide'de default yoktur) */}
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
-                      </button>
+                      <a href="https://www.instagram.com/libanwszklance/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#93b45b] hover:text-white hover:border-[#93b45b] transition shadow-sm">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                      </a>
                    </div>
                 </div>
                 
                 <div className="bg-gray-200 rounded-[2rem] overflow-hidden min-h-[350px] shadow-inner border border-gray-100 relative">
-                   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2445.688265005934!2d21.0371302770281!3d52.20361097198126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47192df785050f21%3A0xc31481b0a8523315!2sGagarina%2031%2C%2000-753%20Warszawa!5e0!3m2!1sen!2spl!4v1700000000000!5m2!1sen!2spl" width="100%" height="100%" style={{border:0, position:'absolute', top:0, left:0}} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+                   <iframe src="https://maps.google.com/maps?q=Gagarina%2031%2C%20Warszawa&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style={{border:0, position:'absolute', top:0, left:0}} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
                 </div>
              </div>
           </section>
