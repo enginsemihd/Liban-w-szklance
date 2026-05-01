@@ -841,7 +841,7 @@ export default function CustomerPage() {
              <h2 className="font-display text-4xl font-bold mb-10 text-center text-[#16261B]">{T[lang].navAbout}</h2>
              <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-gray-100 flex flex-col md:flex-row gap-10 items-center">
                 <div className="flex-1 space-y-5 text-gray-600 text-justify md:text-left"><h3 className="font-display text-3xl font-bold text-[#7a964a]">Liban w Szklance</h3><p className="leading-relaxed">{T[lang].aboutP1}</p><p className="leading-relaxed">{T[lang].aboutP2}</p><p className="leading-relaxed">{T[lang].aboutP3}</p><p className="leading-relaxed font-semibold text-gray-800">{T[lang].aboutP4}</p></div>
-                <div className="w-full md:w-5/12 aspect-[4/3] bg-gray-100 rounded-3xl overflow-hidden relative shadow-inner"><img src="https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/batroun.png" className="w-full h-full object-cover" alt="Liban w Szklance" /></div>
+                <div className="w-full md:w-5/12 aspect-[4/3] bg-gray-100 rounded-3xl overflow-hidden relative shadow-inner"><img src="https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/logo.jpeg" className="w-full h-full object-cover" alt="Liban w Szklance" /></div>
              </div>
           </section>
 
