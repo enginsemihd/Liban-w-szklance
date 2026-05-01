@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   ShoppingBag, Plus, Minus, X, Check, Phone, User,
-  ChevronRight, ArrowLeft, Store, Flame, ShieldCheck, Bell, Search, Clock, Package, MapPin, Mail, Globe, Quote
+  ChevronRight, ArrowLeft, Store, Flame, ShieldCheck, Bell, Search, Clock, Package, MapPin, Mail, Globe, Quote, Info
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -62,10 +62,11 @@ const T = {
     readyToast: 'Your order is ready for pickup! See you soon.', preparingToast: 'Great news! Your order is now being prepared.',
     trackOrder: 'Track Order', trackTitle: 'Track Your Order', phoneLabel: 'Phone Number', checkStatus: 'Check Status', notFound: 'No recent orders found for this number.', 
     status_new: 'Order Received', status_preparing: 'Preparing', status_delivered: 'Gotowy (Ready)',
-    promoTitle: 'Specially for You!', promoSub: 'Treat yourself to something sweet today.', upsellTitle: 'Complete your order', upsellDesc: "Haven't tried our authentic Lebanese desserts yet?", extras: 'Dodatki (Extras)', bag: 'Takeaway Bag',
+    promoTitle: 'Specially for You!', promoSub: 'Treat yourself to something sweet today.', upsellTitle: 'Complete your order', upsellDesc: "Haven't tried our authentic Lebanese desserts yet?", extrasTitle: 'Extras', bag: 'Takeaway Bag',
     capacityError: 'Sorry, this time slot is full. Please choose another one.',
     callMessage: 'Our staff will call you shortly to confirm your order.', generalError: 'Something went wrong. Please try again.', authError: 'Authentication error. Please refresh the page.',
     address: 'Address', openingHours: 'Opening Hours', followUs: 'Follow Us',
+    allergens: 'Allergens',
     aboutP1: 'Liban w Szklance is really just our love letter to Lebanese culture, its vibrant flavors, and the kind of hospitality that makes you feel instantly at home. We grew up surrounded by family traditions and the unbeatable taste of home made cocktails, so we decided to build a cozy, modern space to share that authentic experience with you.',
     aboutP2: 'Everything we make comes down to one simple rule: quality matters. We handpick our ingredients and blend every single cocktail with care, making sure the natural flavors and freshness truly shine. There are no shortcuts here—just honest, cherished recipes straight from our Lebanese roots.',
     aboutP3: 'We\'ve always believed that Liban w Szklance shouldn\'t just be a shop. We want it to feel like stepping into a friend\'s home. Every glass is poured with love, and every person walking through our doors is welcomed as a guest. Whether you\'re grabbing a quick cocktail on the go or tasting our flavors for the first time, we hope it brightens your day.',
@@ -80,10 +81,11 @@ const T = {
     readyToast: 'Twoje zamówienie jest gotowe do odbioru! Do zobaczenia.', preparingToast: 'Świetna wiadomość! Twoje zamówienie jest przygotowywane.',
     trackOrder: 'Śledź Zamówienie', trackTitle: 'Śledź swoje zamówienie', phoneLabel: 'Numer telefonu', checkStatus: 'Sprawdź status', notFound: 'Brak aktywnych zamówień dla tego numeru.', 
     status_new: 'Przyjęte', status_preparing: 'W przygotowaniu', status_delivered: 'Gotowy',
-    promoTitle: 'Specjalnie dla Ciebie!', promoSub: 'Pozwól sobie na coś słodkiego.', upsellTitle: 'Uzupełnij zamówienie', upsellDesc: 'Może dodasz te libańskie klasyki?', extras: 'Dodatki', bag: 'Torba na wynos',
+    promoTitle: 'Specjalnie dla Ciebie!', promoSub: 'Pozwól sobie na coś słodkiego.', upsellTitle: 'Uzupełnij zamówienie', upsellDesc: 'Może dodasz te libańskie klasyki?', extrasTitle: 'Dodatki', bag: 'Torba na wynos',
     capacityError: 'Przepraszamy, ten slot czasowy jest pełny. Wybierz inny.',
     callMessage: 'Nasz personel skontaktuje się z Tobą telefonicznie w celu potwierdzenia zamówienia.', generalError: 'Coś poszło nie tak. Spróbuj ponownie.', authError: 'Błąd uwierzytelniania. Odśwież stronę.',
     address: 'Adres', openingHours: 'Godziny Otwarcia', followUs: 'Śledź Nas',
+    allergens: 'Alergeny',
     aboutP1: 'Liban w Szklance to tak naprawdę nasz list miłosny do libańskiej kultury, jej tętniących życiem smaków i gościnności, dzięki której od razu czujesz się jak w domu. Wychowaliśmy się w otoczeniu rodzinnych tradycji i niepowtarzalnego smaku domowych koktajli, dlatego postanowiliśmy stworzyć przytulne, nowoczesne miejsce, by móc się tym z Wami podzielić.',
     aboutP2: 'We wszystkim, co robimy, kierujemy się jedną prostą zasadą: jakość ma znaczenie. Starannie dobieramy składniki i przygotowujemy każdy koktajl z ogromną dbałością, by naturalne smaki i świeżość grały pierwsze skrzypce. Nie idziemy na skróty — to po prostu szczere, pielęgnowane od lat przepisy prosto z naszych libańskich korzeni.',
     aboutP3: 'Zawsze wierzyliśmy, że Liban w Szklance to nie tylko zwykły lokal. Chcemy, aby przekroczenie naszych progów przypominało wizytę w domu dobrego przyjaciela. Każdą szklankę przygotowujemy z sercem, a każdego, kto nas odwiedza, witamy jak wyjątkowego gościa. Niezależnie od tego, czy wpadasz na szybkie orzeźwienie, czy próbujesz naszych smaków po raz pierwszy, mamy nadzieję, że poprawimy Ci dzień.',
@@ -108,148 +110,147 @@ const CATEGORIES = [
 
 const MENU_ITEMS = {
   cocktails: [
-    { id: 'trypoli', name: 'Trypoli', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/trypolis.jpg', tagline: 'Seasonal fruits, strawberry cocktail, ashta, nuts, raisins, honey', sizes: [{ label: '300ml', price: 28.0 }, { label: '500ml', price: 34.0 }] },
-    { id: 'sidon', name: 'Sidon', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/sydon.png', tagline: 'Seasonal fruits, avocado cocktail, ashta, nuts, raisins, honey', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 37.0 }] },
-    { id: 'batroun', name: 'Batroun', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/batroun.png', tagline: 'Seasonal fruits, avocado cocktail, pineapple, mango, ashta, nuts, honey', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 38.0 }], popular: true },
-    { id: 'jounieh', name: 'Jounieh', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jounieh%20.png', tagline: 'Seasonal fruits, avocado & strawberry cocktail, ashta, nuts, raisins, honey', sizes: [{ label: '300ml', price: 29.0 }, { label: '500ml', price: 35.0 }] },
-    { id: 'beirut', name: 'Beirut', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/bejrut-1.png', tagline: 'Avocado cocktail, pineapple, mango, ashta, nuts, raisins, honey', sizes: [{ label: '300ml', price: 33.0 }, { label: '500ml', price: 38.0 }], popular: true },
-    { id: 'baalbek', name: 'Baalbek', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Koktajl%20baalbek.jpg', tagline: 'Seasonal fruits, mango pulp, strawberry cocktail, ashta, pineapple, nuts', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 34.0 }] },
-    { id: 'zahle', name: 'Zahle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Zahle%20.png', tagline: 'Premium cocktail blend with exotic fruits and honey', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 38.0 }] },
-    { id: 'cedry', name: 'Cedry', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cedry.png', tagline: 'Authentic taste of Lebanon with rich fruit layers', sizes: [{ label: '300ml', price: 31.0 }, { label: '500ml', price: 37.0 }] },
+    { id: 'trypoli', name: 'Trypoli', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/trypolis.jpg', tagline: 'Seasonal fruits, strawberry cocktail, ashta, nuts, raisins, honey', taglinePl: 'Owoce sezonowe, koktajl truskawkowy, aszta, orzechy, rodzynki, miód', sizes: [{ label: '300ml', price: 28.0 }, { label: '500ml', price: 34.0 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'sidon', name: 'Sidon', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/sydon.png', tagline: 'Seasonal fruits, avocado cocktail, ashta, nuts, raisins, honey', taglinePl: 'Owoce sezonowe, koktajl z awokado, aszta, orzechy, rodzynki, miód', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 37.0 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'batroun', name: 'Batroun', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/batroun.png', tagline: 'Seasonal fruits, avocado cocktail, pineapple, mango, ashta, nuts, honey', taglinePl: 'Owoce sezonowe, koktajl z awokado, ananas, mango, aszta, orzechy, miód', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 38.0 }], popular: true, allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'jounieh', name: 'Jounieh', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jounieh%20.png', tagline: 'Seasonal fruits, avocado & strawberry cocktail, ashta, nuts, raisins, honey', taglinePl: 'Owoce sezonowe, koktajl z awokado i truskawek, aszta, orzechy, rodzynki, miód', sizes: [{ label: '300ml', price: 29.0 }, { label: '500ml', price: 35.0 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'beirut', name: 'Beirut', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/bejrut-1.png', tagline: 'Avocado cocktail, pineapple, mango, ashta, nuts, raisins, honey', taglinePl: 'Koktajl z awokado, ananas, mango, aszta, orzechy, rodzynki, miód', sizes: [{ label: '300ml', price: 33.0 }, { label: '500ml', price: 38.0 }], popular: true, allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'baalbek', name: 'Baalbek', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Koktajl%20baalbek.jpg', tagline: 'Seasonal fruits, mango pulp, strawberry cocktail, ashta, pineapple, nuts', taglinePl: 'Owoce sezonowe, pulpa z mango, koktajl truskawkowy, aszta, ananas, orzechy', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 34.0 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'zahle', name: 'Zahle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Zahle%20.png', tagline: 'Premium cocktail blend with exotic fruits and honey', taglinePl: 'Koktajl premium z egzotycznymi owocami i miodem', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 38.0 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'cedry', name: 'Cedry', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cedry.png', tagline: 'Authentic taste of Lebanon with rich fruit layers', taglinePl: 'Autentyczny smak Libanu z bogatymi warstwami owoców', sizes: [{ label: '300ml', price: 31.0 }, { label: '500ml', price: 37.0 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'jehita', name: 'Jehita', image: '', tagline: 'Special Lebanese cocktail blend', taglinePl: 'Specjalna libańska mieszanka koktajlowa', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 36.0 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'jezzin', name: 'Jezzin', image: '', tagline: 'Special Lebanese cocktail blend', taglinePl: 'Specjalna libańska mieszanka koktajlowa', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 36.0 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
   ],
   protein_shakes: [
-    { id: 'banana_dates_boost', name: 'Banana Dates Boost', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Banana%20Dates%20Boost%20.jpg', tagline: 'Banana, dates, protein powder, milk', sizes: [{ label: 'Standard', price: 25.0 }] },
-    { id: 'chocolate_dates_delight', name: 'Chocolate Dates Delight', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Chocolate%20Dates%20Delight.jpg', tagline: 'Chocolate, dates, protein powder, milk', sizes: [{ label: 'Standard', price: 26.0 }] },
-    { id: 'coconut_almond_energy', name: 'Coconut Almond Energy', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Coconut%20Almond%20Energy.jpg', tagline: 'Coconut, almonds, protein powder, milk', sizes: [{ label: 'Standard', price: 28.0 }] },
-    { id: 'berry_fit', name: 'Berry Fit', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Berry%20Fit.jpg', tagline: 'Mixed berries, protein powder, milk', sizes: [{ label: 'Standard', price: 26.0 }] },
-    { id: 'mango_power', name: 'Mango Power', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Mango%20Power%20.jpg', tagline: 'Mango, protein powder, milk', sizes: [{ label: 'Standard', price: 27.0 }] },
+    { id: 'banana_dates_boost', name: 'Banana Dates Boost', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Banana%20Dates%20Boost%20.jpg', tagline: 'Banana, dates, protein powder, milk', taglinePl: 'Banan, daktyle, odżywka białkowa, mleko', sizes: [{ label: 'Standard', price: 25.0 }], allergens: 'Milk, Nuts (Peanut Butter)', allergensPl: 'Mleko, Orzechy (Masło Orzechowe)' },
+    { id: 'chocolate_dates_delight', name: 'Chocolate Dates Delight', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Chocolate%20Dates%20Delight.jpg', tagline: 'Chocolate, dates, protein powder, milk', taglinePl: 'Czekolada, daktyle, odżywka białkowa, mleko', sizes: [{ label: 'Standard', price: 26.0 }], allergens: 'Milk, Nuts (Peanut Butter), Chocolate Protein', allergensPl: 'Mleko, Orzechy (Masło Orzechowe), Białko Czekoladowe' },
+    { id: 'coconut_almond_energy', name: 'Coconut Almond Energy', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Coconut%20Almond%20Energy.jpg', tagline: 'Coconut, almonds, protein powder, milk', taglinePl: 'Kokos, migdały, odżywka białkowa, mleko', sizes: [{ label: 'Standard', price: 28.0 }], allergens: 'Milk, Nuts (Peanut Butter)', allergensPl: 'Mleko, Orzechy (Masło Orzechowe)' },
+    { id: 'berry_fit', name: 'Berry Fit', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Berry%20Fit.jpg', tagline: 'Mixed berries, protein powder, milk', taglinePl: 'Owoce leśne, odżywka białkowa, mleko', sizes: [{ label: 'Standard', price: 26.0 }], allergens: 'Milk, Nuts (Almonds)', allergensPl: 'Mleko, Orzechy (Migdały)' },
+    { id: 'mango_power', name: 'Mango Power', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Mango%20Power%20.jpg', tagline: 'Mango, protein powder, milk', taglinePl: 'Mango, odżywka białkowa, mleko', sizes: [{ label: 'Standard', price: 27.0 }], allergens: 'Milk, Nuts (Almonds)', allergensPl: 'Mleko, Orzechy (Migdały)' },
   ],
   healthy_mixes: [
-    { id: 'kac', name: 'Kac (Hangover)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kac.jpg', tagline: 'Revitalizing mix for recovery', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'moc', name: 'Moc (Power)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/moc.jpg', tagline: 'Energy boosting blend', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'metabolizm', name: 'Metabolizm', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/metabolizm.jpg', tagline: 'Boost your metabolism naturally', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'odpornosc', name: 'Odporność (Immunity)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/odpornosc.jpg', tagline: 'Vitamins and immune support', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'cera', name: 'Cera (Skin Glowing)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cera.jpg', tagline: 'For healthy and glowing skin', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'jallab', name: 'Jallab', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jallab.jpg', tagline: 'Traditional date molasses and rose water drink', sizes: [{ label: 'Standard', price: 18.0 }] },
+    { id: 'kac', name: 'Kac (Hangover)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kac.jpg', tagline: 'Revitalizing mix for recovery', taglinePl: 'Rewitalizująca mieszanka na regenerację', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'moc', name: 'Moc (Power)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/moc.jpg', tagline: 'Energy boosting blend', taglinePl: 'Mieszanka dodająca energii', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'metabolizm', name: 'Metabolizm', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/metabolizm.jpg', tagline: 'Boost your metabolism naturally', taglinePl: 'Naturalne przyspieszenie metabolizmu', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'odpornosc', name: 'Odporność (Immunity)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/odpornosc.jpg', tagline: 'Vitamins and immune support', taglinePl: 'Witaminy i wsparcie odporności', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'cera', name: 'Cera (Skin Glowing)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cera.jpg', tagline: 'For healthy and glowing skin', taglinePl: 'Dla zdrowej i promiennej cery', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'jallab', name: 'Jallab', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jallab.jpg', tagline: 'Traditional date molasses and rose water drink', taglinePl: 'Tradycyjny napój z melasy daktylowej i wody różanej', sizes: [{ label: 'Standard', price: 18.0 }], allergens: 'Nuts (Almonds)', allergensPl: 'Orzechy (Migdały)' },
   ],
   juices: [
-    { id: 'orange_juice', name: 'Fresh Orange Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pomarancza.jpg', tagline: 'Freshly squeezed', sizes: [{ label: 'Standard', price: 17.5 }] },
-    { id: 'apple_juice', name: 'Fresh Apple Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jablko.jpg', tagline: 'Freshly squeezed', sizes: [{ label: 'Standard', price: 17.5 }] },
-    { id: 'carrot_juice', name: 'Carrot Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchewka.jpg', tagline: 'Fresh carrot juice', sizes: [{ label: 'Standard', price: 16.0 }] },
-    { id: 'carrot_orange', name: 'Carrot & Orange', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchew%20pomarancz.jpg', tagline: 'Mixed fresh juice', sizes: [{ label: 'Standard', price: 18.0 }] },
-    { id: 'pomegranate_juice', name: 'Pomegranate Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/granat.jpg', tagline: 'Fresh pomegranate', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'lemonade', name: 'Classic Lemonade', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada.jpg', tagline: 'Refreshing classic lemonade', sizes: [{ label: 'Standard', price: 15.0 }] },
-    { id: 'lemonade_mint', name: 'Mint Lemonade', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada%20mieta.jpg', tagline: 'Lemonade with fresh mint leaves', sizes: [{ label: 'Standard', price: 16.0 }] },
+    { id: 'orange_juice', name: 'Fresh Orange Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pomarancza.jpg', tagline: 'Freshly squeezed', taglinePl: 'Świeżo wyciskany', sizes: [{ label: 'Standard', price: 17.5 }] },
+    { id: 'apple_juice', name: 'Fresh Apple Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jablko.jpg', tagline: 'Freshly squeezed', taglinePl: 'Świeżo wyciskany', sizes: [{ label: 'Standard', price: 17.5 }] },
+    { id: 'carrot_juice', name: 'Carrot Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchewka.jpg', tagline: 'Fresh carrot juice', taglinePl: 'Świeży sok marchewkowy', sizes: [{ label: 'Standard', price: 16.0 }] },
+    { id: 'carrot_orange', name: 'Carrot & Orange', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchew%20pomarancz.jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: 'Standard', price: 18.0 }] },
+    { id: 'pomegranate_juice', name: 'Pomegranate Juice', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/granat.jpg', tagline: 'Fresh pomegranate', taglinePl: 'Świeży granat', sizes: [{ label: 'Standard', price: 22.0 }] },
+    { id: 'lemonade', name: 'Classic Lemonade', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada.jpg', tagline: 'Refreshing classic lemonade', taglinePl: 'Klasyczna orzeźwiająca lemoniada', sizes: [{ label: 'Standard', price: 15.0 }] },
+    { id: 'lemonade_mint', name: 'Mint Lemonade', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada%20mieta.jpg', tagline: 'Lemonade with fresh mint leaves', taglinePl: 'Lemoniada ze świeżymi liśćmi mięty', sizes: [{ label: 'Standard', price: 16.0 }] },
   ],
   waffles: [
-    { id: 'waffle_mascarpone', name: 'Mascarpone Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20mascarpone.jpg', tagline: 'Mascarpone, mix fruits, honey, nuts', sizes: [{ label: 'Standard', price: 27.0 }] },
-    { id: 'waffle_whipped', name: 'Whipped Cream Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20bita%20smietana%20i%20mix%20owocow.jpg', tagline: 'Whipped cream, mix fruits, chocolate sauce', sizes: [{ label: 'Standard', price: 23.0 }] },
-    { id: 'waffle_jam', name: 'Strawberry Jam Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20dzem%20truskawky.jpg', tagline: 'Strawberry jam, whipped cream, strawberry sauce', sizes: [{ label: 'Standard', price: 23.0 }] },
-    { id: 'waffle_ashta', name: 'Ashta Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'Ashta, mix fruits, honey, mix nuts', sizes: [{ label: 'Standard', price: 28.0 }], popular: true },
-    { id: 'waffle_nutella', name: 'Nutella & Banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20nutella.jpg', tagline: 'Nutella, banana, whipped cream', sizes: [{ label: 'Standard', price: 25.0 }] },
-    { id: 'waffle_sugar', name: 'Classic Sugar Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20cuker.jpg', tagline: 'Powdered sugar', sizes: [{ label: 'Standard', price: 13.0 }] },
+    { id: 'waffle_mascarpone', name: 'Mascarpone Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20mascarpone.jpg', tagline: 'Mascarpone, mix fruits, honey, nuts', taglinePl: 'Mascarpone, mix owoców, miód, orzechy', sizes: [{ label: 'Standard', price: 27.0 }], allergens: 'Gluten, Milk, Nuts Mix', allergensPl: 'Gluten, Mleko, Orzechy Mix' },
+    { id: 'waffle_whipped', name: 'Whipped Cream Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20bita%20smietana%20i%20mix%20owocow.jpg', tagline: 'Whipped cream, mix fruits, chocolate sauce', taglinePl: 'Bita śmietana, mix owoców, sos czekoladowy', sizes: [{ label: 'Standard', price: 23.0 }], allergens: 'Gluten, Milk, Soy', allergensPl: 'Gluten, Mleko, Soja' },
+    { id: 'waffle_jam', name: 'Strawberry Jam Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20dzem%20truskawky.jpg', tagline: 'Strawberry jam, whipped cream, strawberry sauce', taglinePl: 'Dżem truskawkowy, bita śmietana, sos truskawkowy', sizes: [{ label: 'Standard', price: 23.0 }], allergens: 'Gluten, Milk', allergensPl: 'Gluten, Mleko' },
+    { id: 'waffle_ashta', name: 'Ashta Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'Ashta, mix fruits, honey, mix nuts', taglinePl: 'Aszta, mix owoców, miód, mix orzechów', sizes: [{ label: 'Standard', price: 28.0 }], popular: true, allergens: 'Gluten, Milk, Nuts Mix', allergensPl: 'Gluten, Mleko, Orzechy Mix' },
+    { id: 'waffle_nutella', name: 'Nutella & Banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20nutella.jpg', tagline: 'Nutella, banana, whipped cream', taglinePl: 'Nutella, banan, bita śmietana', sizes: [{ label: 'Standard', price: 25.0 }], allergens: 'Gluten, Milk, Soy, Nuts', allergensPl: 'Gluten, Mleko, Soja, Orzechy' },
+    { id: 'waffle_sugar', name: 'Classic Sugar Waffle', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20cuker.jpg', tagline: 'Powdered sugar', taglinePl: 'Cukier puder', sizes: [{ label: 'Standard', price: 13.0 }], allergens: 'Gluten', allergensPl: 'Gluten' },
   ],
   savory_crepes: [
-    { id: 'crepe_zaatar', name: 'Labneh & Zaatar', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/labneh.jpg', tagline: 'Labneh, olive oil, zaatar, veggies', sizes: [{ label: 'Standard', price: 28.0 }] },
-    { id: 'crepe_ham', name: 'Cheese & Ham', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20ser%20zolty.jpg', tagline: 'Yellow cheese, ham, mushrooms', sizes: [{ label: 'Standard', price: 28.0 }] },
-    { id: 'crepe_mozzarella', name: 'Mozzarella', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mozarella.jpg', tagline: 'Mozzarella, oregano, mushrooms, tomatoes', sizes: [{ label: 'Standard', price: 28.0 }] },
+    { id: 'crepe_zaatar', name: 'Labneh & Zaatar', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/labneh.jpg', tagline: 'Labneh, olive oil, zaatar, veggies', taglinePl: 'Labneh, oliwa z oliwek, zaatar, warzywa', sizes: [{ label: 'Standard', price: 28.0 }], allergens: 'Gluten, Milk, Sesame', allergensPl: 'Gluten, Mleko, Sezam' },
+    { id: 'crepe_ham', name: 'Cheese & Ham', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20ser%20zolty.jpg', tagline: 'Yellow cheese, ham, mushrooms', taglinePl: 'Ser żółty, szynka, pieczarki', sizes: [{ label: 'Standard', price: 28.0 }], allergens: 'Gluten, Milk', allergensPl: 'Gluten, Mleko' },
+    { id: 'crepe_mozzarella', name: 'Mozzarella', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mozarella.jpg', tagline: 'Mozzarella, oregano, mushrooms, tomatoes', taglinePl: 'Mozzarella, oregano, pieczarki, pomidory', sizes: [{ label: 'Standard', price: 28.0 }], allergens: 'Gluten, Milk', allergensPl: 'Gluten, Mleko' },
   ],
   sweet_crepes: [
-    { id: 'crepe_mango_mascarpone', name: 'Mango Mascarpone', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mango%20mascarpone.jpg', tagline: 'Sweet crepe with mango and mascarpone', sizes: [{ label: 'Standard', price: 26.0 }] },
-    { id: 'crepe_apple_mousse', name: 'Apple Mousse', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mus%20jalbkowy.jpg', tagline: 'Sweet crepe with apple mousse', sizes: [{ label: 'Standard', price: 24.0 }] },
-    { id: 'crepe_nutella_banana', name: 'Nutella Banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20nutella%20banana.jpg', tagline: 'Classic Nutella and banana crepe', sizes: [{ label: 'Standard', price: 25.0 }] },
-    { id: 'oreo_shake', name: 'Oreo', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/oreo.jpg', tagline: 'Oreo cookies and sweet cream', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'lotus_shake', name: 'Lotus Biscoff', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lotus.jpg', tagline: 'Lotus spread and sweet cream', sizes: [{ label: 'Standard', price: 24.0 }] },
-    { id: 'kitkat_shake', name: 'KitKat', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kitkat.jpg', tagline: 'KitKat chocolate and sweet cream', sizes: [{ label: 'Standard', price: 22.0 }] },
-    { id: 'pistachio_shake', name: 'Pistachio', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pistacjo.jpg', tagline: 'Premium pistachio blend', sizes: [{ label: 'Standard', price: 28.0 }] },
-    { id: 'peanut_butter_shake', name: 'Peanut Butter', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/maslo%20orzechowe.jpg', tagline: 'Creamy peanut butter blend', sizes: [{ label: 'Standard', price: 23.0 }] },
+    { id: 'crepe_mango_mascarpone', name: 'Mango Mascarpone', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mango%20mascarpone.jpg', tagline: 'Sweet crepe with mango and mascarpone', taglinePl: 'Słodki naleśnik z mango i mascarpone', sizes: [{ label: 'Standard', price: 26.0 }], allergens: 'Gluten, Milk', allergensPl: 'Gluten, Mleko' },
+    { id: 'crepe_apple_mousse', name: 'Apple Mousse', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mus%20jalbkowy.jpg', tagline: 'Sweet crepe with apple mousse', taglinePl: 'Słodki naleśnik z musem jabłkowym', sizes: [{ label: 'Standard', price: 24.0 }], allergens: 'Gluten, Milk', allergensPl: 'Gluten, Mleko' },
+    { id: 'crepe_nutella_banana', name: 'Nutella Banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20nutella%20banana.jpg', tagline: 'Classic Nutella and banana crepe', taglinePl: 'Klasyczny naleśnik z Nutellą i bananem', sizes: [{ label: 'Standard', price: 25.0 }], allergens: 'Gluten, Milk, Soy, Hazelnuts', allergensPl: 'Gluten, Mleko, Soja, Orzechy Laskowe' },
+    { id: 'oreo_shake', name: 'Oreo', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/oreo.jpg', tagline: 'Oreo cookies and sweet cream', taglinePl: 'Ciasteczka Oreo i słodka śmietana', sizes: [{ label: 'Standard', price: 22.0 }], allergens: 'Gluten, Milk, Soy', allergensPl: 'Gluten, Mleko, Soja' },
+    { id: 'lotus_shake', name: 'Lotus Biscoff', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lotus.jpg', tagline: 'Lotus spread and sweet cream', taglinePl: 'Krem Lotus i słodka śmietana', sizes: [{ label: 'Standard', price: 24.0 }], allergens: 'Gluten, Milk, Soy', allergensPl: 'Gluten, Mleko, Soja' },
+    { id: 'kitkat_shake', name: 'KitKat', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kitkat.jpg', tagline: 'KitKat chocolate and sweet cream', taglinePl: 'Czekolada KitKat i słodka śmietana', sizes: [{ label: 'Standard', price: 22.0 }], allergens: 'Gluten, Milk, Soy', allergensPl: 'Gluten, Mleko, Soja' },
+    { id: 'pistachio_shake', name: 'Pistachio', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pistacjo.jpg', tagline: 'Premium pistachio blend', taglinePl: 'Premium mieszanka pistacjowa', sizes: [{ label: 'Standard', price: 28.0 }], allergens: 'Gluten, Milk, Soy, Pistachios', allergensPl: 'Gluten, Mleko, Soja, Pistacje' },
+    { id: 'peanut_butter_shake', name: 'Peanut Butter', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/maslo%20orzechowe.jpg', tagline: 'Creamy peanut butter blend', taglinePl: 'Kremowa mieszanka z masłem orzechowym', sizes: [{ label: 'Standard', price: 23.0 }], allergens: 'Gluten, Milk, Peanuts', allergensPl: 'Gluten, Mleko, Orzechy Ziemne' },
   ],
   ice_cream: [
-    { id: 'lody-artisan', name: 'Artisan Ice Cream', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious artisanal ice cream', sizes: [{ label: 'Standard', price: 18.0 }] },
-    { id: 'lody-dog', name: 'Ice Cream for Dogs', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/icecreamfordogs.png', tagline: 'Special dog-friendly ice cream in a cup', sizes: [{ label: '1 Cup', price: 12.0 }] },
+    { id: 'lody-artisan', name: 'Artisan Ice Cream', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious artisanal ice cream', taglinePl: 'Pyszne lody rzemieślnicze', sizes: [{ label: 'Standard', price: 18.0 }] },
+    { id: 'lody-dog', name: 'Ice Cream for Dogs', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/icecreamfordogs.png', tagline: 'Special dog-friendly ice cream in a cup', taglinePl: 'Specjalne lody dla psów w kubku', sizes: [{ label: '1 Cup', price: 12.0 }] },
   ],
   ashta: [
-    { id: 'ashta-fruits', name: 'Ashta & Fruits (500g)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/aszta.jpeg', tagline: 'Authentic Lebanese ashta cream served with fruits', sizes: [{ label: '500g', price: 92.5 }] },
-    { id: 'anaya_ashta', name: 'Anaya with Ashta', image: '', tagline: 'Traditional dessert', sizes: [{ label: 'Standard', price: 36.5 }] },
-    { id: 'katayef', name: 'Katayef', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/katayef.jpeg', tagline: 'Lebanese sweet stuffed with ashta', sizes: [{ label: 'Standard', price: 30.0 }] }
+    { id: 'ashta-fruits', name: 'Ashta & Fruits', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/aszta.jpeg', tagline: 'Authentic Lebanese ashta cream served with fruits', taglinePl: 'Autentyczny libański krem aszta serwowany z owocami', sizes: [{ label: '350g', price: 65.0 }, { label: '500g', price: 92.5 }, { label: '1kg', price: 180.0 }], allergens: 'Gluten, Milk, Nuts Mix', allergensPl: 'Gluten, Mleko, Orzechy Mix' },
+    { id: 'anaya_ashta', name: 'Anaya with Ashta', image: '', tagline: 'Traditional dessert', taglinePl: 'Tradycyjny deser', sizes: [{ label: 'Standard', price: 36.5 }], allergens: 'Milk, Nuts', allergensPl: 'Mleko, Orzechy' },
+    { id: 'katayef', name: 'Katayef', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/katayef.jpeg', tagline: 'Lebanese sweet stuffed with ashta', taglinePl: 'Libański słodki deser faszerowany asztą', sizes: [{ label: 'Standard', price: 30.0 }] }
   ],
   combo: [
-    { id: 'combo_fettuccine', name: 'Combo: Fettuccine Pancakes', image: '', tagline: 'Fresh juice or lemonade + fettuccine pancakes.', sizes: [{ label: 'Standard', price: 35.0 }] },
+    { id: 'combo_fettuccine', name: 'Combo: Fettuccine Pancakes', image: '', tagline: 'Fresh juice or lemonade + fettuccine pancakes.', taglinePl: 'Świeży sok lub lemoniada + naleśniki fettuccine.', sizes: [{ label: 'Standard', price: 35.0 }] },
   ],
   drinks: [
-    { id: 'tea_mint', name: 'Lebanese Tea with Mint', image: '', tagline: 'Traditional hot tea', sizes: [{ label: 'Standard', price: 12.0 }] },
-    { id: 'tea_kardamon', name: 'Lebanese Tea with Kardamon', image: '', tagline: 'Traditional hot tea', sizes: [{ label: 'Standard', price: 12.0 }] },
-    { id: 'tea_winter', name: 'Polish Winter Tea', image: '', tagline: 'Warming winter tea', sizes: [{ label: 'Standard', price: 18.0 }] },
-    { id: 'coffee_lebanese', name: 'Lebanese Coffee', image: '', tagline: 'Strong traditional coffee', sizes: [{ label: 'Standard', price: 10.0 }] },
+    { id: 'tea_mint', name: 'Lebanese Tea with Mint', image: '', tagline: 'Traditional hot tea', taglinePl: 'Tradycyjna gorąca herbata', sizes: [{ label: 'Standard', price: 12.0 }] },
+    { id: 'tea_kardamon', name: 'Lebanese Tea with Kardamon', image: '', tagline: 'Traditional hot tea', taglinePl: 'Tradycyjna gorąca herbata', sizes: [{ label: 'Standard', price: 12.0 }] },
+    { id: 'tea_winter', name: 'Polish Winter Tea', image: '', tagline: 'Warming winter tea', taglinePl: 'Rozgrzewająca zimowa herbata', sizes: [{ label: 'Standard', price: 18.0 }] },
+    { id: 'coffee_lebanese', name: 'Lebanese Coffee', image: '', tagline: 'Strong traditional coffee', taglinePl: 'Mocna tradycyjna kawa', sizes: [{ label: 'Standard', price: 10.0 }], allergens: 'Milk', allergensPl: 'Mleko' },
   ]
 };
 
 const EXTRAS_OPTIONS = [
-  { id: 'ext_aszta', name: 'Extra Ashta', price: 7.5 },
-  { id: 'ext_honey', name: 'Extra Honey', price: 4.0 },
-  { id: 'ext_nuts', name: 'Extra Nuts', price: 5.5 },
-  { id: 'ext_fruits', name: 'Extra Fruits', price: 6.0 },
+  { id: 'ext_nutella', name: 'Nutella / White chocolate', namePl: 'Nutella / Biała czekolada', price: 8.0 },
+  { id: 'ext_strawberry_jam', name: 'Strawberry jam', namePl: 'Dżem truskawkowy', price: 6.0 },
+  { id: 'ext_ashta', name: 'Ashta (lebanese cheese)', namePl: 'Aszta (libański serek)', price: 8.0 },
+  { id: 'ext_fruits', name: 'Fruits', namePl: 'Owoce', price: 6.0 },
+  { id: 'ext_pistachio_butter', name: 'Pistachio butter', namePl: 'Masło pistacjowe', price: 8.0 },
 ];
 
-const ASHTA_EXTRAS = [
-  { id: 'ext_fruits', name: 'Extra Fruits', price: 6.0 },
-];
+const BAG_OPTIONS = [ { id: 'bag_paper', name: 'Paper Bag', namePl: 'Torba papierowa', price: 0.5 } ];
+const CUP_080 = { name: 'Packaging', namePl: 'Opakowanie', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup', namePl: 'Kubek Bio', price: 0.8 }] };
+const CUP_050 = { name: 'Packaging', namePl: 'Opakowanie', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup', namePl: 'Kubek Bio', price: 0.5 }] };
+const BOX_150 = { name: 'Packaging', namePl: 'Opakowanie', required: true, multi: false, options: [{ id: 'takeaway_box', name: 'Eco Box', namePl: 'Eko Pudełko', price: 1.5 }] };
 
-const BAG_OPTIONS = [ { id: 'bag_paper', name: 'Paper Bag (+0.50 PLN)', price: 0.5 } ];
-const CUP_080 = { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup (+0.80 PLN)', price: 0.8 }] };
-const CUP_050 = { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_cup', name: 'Bio Cup (+0.50 PLN)', price: 0.5 }] };
-const BOX_150 = { name: 'Packaging', required: true, multi: false, options: [{ id: 'takeaway_box', name: 'Eco Box (+1.50 PLN)', price: 1.5 }] };
-
-const MILK_OPTIONS = { name: 'Milk Base', required: true, multi: false, options: [
-  { id: 'normal', name: 'Regular Milk', price: 0 }, 
-  { id: 'lactose_free', name: 'Lactose-free Milk', price: 0 }, 
-  { id: 'oat', name: 'Oat Milk (+8.00 PLN)', price: 8 }, 
-  { id: 'almond', name: 'Almond Milk (+8.00 PLN)', price: 8 }, 
-  { id: 'coconut', name: 'Coconut Milk (+8.00 PLN)', price: 8 }
+const MILK_OPTIONS = { name: 'Milk Base', namePl: 'Baza Mleczna', required: true, multi: false, options: [
+  { id: 'normal', name: 'Regular Milk', namePl: 'Zwykłe Mleko', price: 0 }, 
+  { id: 'lactose_free', name: 'Lactose-free Milk', namePl: 'Mleko bez laktozy', price: 0 }, 
+  { id: 'oat', name: 'Oat Milk (+8.00 PLN)', namePl: 'Mleko Owsiane (+8.00 PLN)', price: 8 }, 
+  { id: 'almond', name: 'Almond Milk (+8.00 PLN)', namePl: 'Mleko Migdałowe (+8.00 PLN)', price: 8 }, 
+  { id: 'coconut', name: 'Coconut Milk (+8.00 PLN)', namePl: 'Mleko Kokosowe (+8.00 PLN)', price: 8 }
 ], default: 'normal' };
 
 const MODIFIERS_BY_CATEGORY = {
   cocktails: {
     packaging: CUP_080,
     milk: MILK_OPTIONS,
-    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
-    extras: { name: 'Extras (Dodatki)', required: false, multi: true, options: EXTRAS_OPTIONS }
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
   },
   protein: { 
     packaging: CUP_050, 
     milk: MILK_OPTIONS,
-    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS }
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
   },
   juice_drink: {
     packaging: CUP_080,
-    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
-    extras: { name: 'Extras (Dodatki)', required: false, multi: true, options: EXTRAS_OPTIONS }
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
   },
   juice_only: {
     packaging: CUP_050,
-    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
-    extras: { name: 'Extras (Dodatki)', required: false, multi: true, options: EXTRAS_OPTIONS }
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
   },
   savory: { 
     packaging: BOX_150,
-    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS }
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
   },
   sweet: { 
     packaging: BOX_150,
-    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
-    extras: { name: 'Extras (Dodatki)', required: false, multi: true, options: EXTRAS_OPTIONS }
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS },
+    extras: { name: 'Extras', namePl: 'Dodatki', required: false, multi: true, options: EXTRAS_OPTIONS }
   },
   ice_cream: {
-    packaging: { name: 'Packaging', required: true, multi: false, options: [
-      { id: 'box_small', name: 'Takeaway Box Small (+7.00 PLN)', price: 7.0 },
-      { id: 'box_big', name: 'Takeaway Box Big (+10.00 PLN)', price: 10.0 }
+    packaging: { name: 'Packaging', namePl: 'Opakowanie', required: true, multi: false, options: [
+      { id: 'box_small', name: 'Takeaway Box Small', namePl: 'Małe Pudełko', price: 7.0 },
+      { id: 'box_big', name: 'Takeaway Box Big', namePl: 'Duże Pudełko', price: 10.0 }
     ], default: 'box_small' },
-    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS }
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
   },
   ashta: {
     packaging: BOX_150,
-    bag: { name: 'Takeaway Bag', required: false, multi: false, options: BAG_OPTIONS },
-    extras: { name: 'Extras (Dodatki)', required: false, multi: true, options: ASHTA_EXTRAS }
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
+  },
+  combo: {
+    packaging: BOX_150,
+    bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
   },
   none: {},
 };
@@ -260,9 +261,10 @@ function getModifiersFor(categoryId, itemId) {
   if (categoryId === 'drinks') return MODIFIERS_BY_CATEGORY.juice_drink;
   if (categoryId === 'juices' || categoryId === 'healthy_mixes') return MODIFIERS_BY_CATEGORY.juice_only;
   if (categoryId === 'savory_crepes') return MODIFIERS_BY_CATEGORY.savory;
-  if (['waffles', 'sweet_crepes', 'combo'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.sweet;
+  if (['waffles', 'sweet_crepes'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.sweet;
   if (categoryId === 'ice_cream') return MODIFIERS_BY_CATEGORY.ice_cream;
   if (categoryId === 'ashta') return MODIFIERS_BY_CATEGORY.ashta;
+  if (categoryId === 'combo') return MODIFIERS_BY_CATEGORY.combo;
   return MODIFIERS_BY_CATEGORY.none;
 }
 
@@ -342,8 +344,14 @@ function TopBar({ lang, setLang }) {
         <a href="https://glovoapp.com/en/pl/warszawa/stores/liban-w-szklance-waw" target="_blank" rel="noopener noreferrer" className="shrink-0 flex items-center gap-1.5 hover:text-[#ffc244] transition"><span className="bg-[#ffc244]/20 text-[#ffc244] p-1 rounded-md"><ShoppingBag size={12} /></span> Glovo</a>
         <a href="https://food.bolt.eu/pl-pl/307-warsaw/p/187787-liban-w-szklance/" target="_blank" rel="noopener noreferrer" className="shrink-0 flex items-center gap-1.5 hover:text-[#34d186] transition"><span className="bg-[#34d186]/20 text-[#34d186] p-1 rounded-md"><ShoppingBag size={12} /></span> Bolt</a>
         <a href="https://www.ubereats.com/pl/store/liban-w-szklance/NySG0olXWqK8SdP995XkzA" target="_blank" rel="noopener noreferrer" className="shrink-0 flex items-center gap-1.5 hover:text-[#06c167] transition"><span className="bg-[#06c167]/20 text-[#06c167] p-1 rounded-md"><ShoppingBag size={12} /></span> UberEats</a>
-        <a href="https://www.instagram.com/libanwszklance/" target="_blank" rel="noopener noreferrer" className="shrink-0 flex items-center gap-1.5 hover:text-[#E4405F] transition border-l border-white/10 pl-3 md:pl-5"><span className="bg-[#E4405F]/20 text-[#E4405F] p-1 rounded-md"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></span> Instagram</a>
-        <a href="https://www.facebook.com/profile.php?id=61585610253402" target="_blank" rel="noopener noreferrer" className="shrink-0 flex items-center gap-1.5 hover:text-[#1877F2] transition border-l border-white/10 pl-3 md:pl-5"><span className="bg-[#1877F2]/20 text-[#1877F2] p-1 rounded-md"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></span> Facebook</a>
+        
+        <a href="https://www.instagram.com/libanwszklance/" target="_blank" rel="noopener noreferrer" className="shrink-0 flex items-center justify-center hover:text-[#E4405F] transition border-l border-white/10 pl-3 md:pl-5">
+          <span className="bg-[#E4405F]/20 text-[#E4405F] p-1.5 rounded-md"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></span>
+        </a>
+        
+        <a href="https://www.facebook.com/profile.php?id=61585610253402" target="_blank" rel="noopener noreferrer" className="shrink-0 flex items-center justify-center hover:text-[#1877F2] transition pl-2">
+          <span className="bg-[#1877F2]/20 text-[#1877F2] p-1.5 rounded-md"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></span>
+        </a>
       </div>
       <div className="flex items-center gap-4 shrink-0">
         <div className="flex items-center gap-2">
@@ -397,7 +405,15 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
              <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 text-gray-800 hover:bg-gray-200 transition shadow-sm"><X size={16} /></button> 
           </div>
         )}
-        <div className="px-6 pt-5 pb-2 shrink-0"> <h2 className="font-display font-semibold text-2xl mb-1">{item.name}</h2> <p className="text-sm text-gray-500">{item.tagline}</p> </div> 
+        <div className="px-6 pt-5 pb-2 shrink-0"> 
+          <h2 className="font-display font-semibold text-2xl mb-1">{item.name}</h2> 
+          <p className="text-sm text-gray-500 mb-2">{lang === 'PL' && item.taglinePl ? item.taglinePl : item.tagline}</p> 
+          {item.allergens && (
+             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider rounded-md">
+                <Info size={12} /> {T[lang].allergens}: {lang === 'PL' && item.allergensPl ? item.allergensPl : item.allergens}
+             </div>
+          )}
+        </div> 
         <div className="flex-1 overflow-y-auto px-6 py-3 space-y-6 text-gray-800"> 
           {item.sizes.length > 1 && ( 
             <section> 
@@ -412,7 +428,7 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
           {Object.entries(modifiers).map(([groupKey, group]) => ( 
             <section key={groupKey}> 
               <div className="flex items-baseline justify-between mb-2.5"> 
-                <h4 className="font-semibold text-sm">{groupKey === 'extras' ? T[lang].extras : groupKey === 'bag' ? T[lang].bag : groupKey === 'milk' ? 'Milk Selection' : group.name}</h4> 
+                <h4 className="font-semibold text-sm">{lang === 'PL' && group.namePl ? group.namePl : group.name}</h4> 
                 {group.required && <span className="text-[10px] uppercase tracking-wide font-bold text-red-500">{T[lang].required}</span>} 
               </div> 
               <div className="space-y-2"> 
@@ -422,7 +438,7 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
                     <button key={opt.id} onClick={() => toggleMod(groupKey, opt)} className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${selected ? 'border-[#93b45b] bg-[#93b45b]/5' : 'border-gray-200 hover:border-gray-300'}`}> 
                       <div className="flex items-center gap-3"> 
                         <span className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${selected ? 'bg-[#93b45b] border-[#93b45b]' : 'border-gray-300'}`}>{selected && <Check size={14} className="text-white" />}</span> 
-                        <span className="text-sm font-medium">{opt.name}</span> 
+                        <span className="text-sm font-medium">{lang === 'PL' && opt.namePl ? opt.namePl : opt.name}</span> 
                       </div> 
                       <span className="text-sm font-semibold text-[#7a964a]">{opt.price > 0 ? `+ ${currency(opt.price)}` : ''}</span> 
                     </button> 
@@ -463,7 +479,7 @@ function CartDrawer({ open, cart, onClose, onRemove, onUpdateQty, onCheckout, la
               <div className="flex justify-between items-start mb-1.5"> 
                 <div className="min-w-0 flex-1 pr-2"> 
                   <div className="font-semibold text-sm truncate">{line.name}</div> 
-                  <div className="text-xs mt-0.5 text-gray-400">{line.sizeLabel}{Object.values(line.mods || {}).flat().map(m => ` • ${m.name}`).join('')}</div> 
+                  <div className="text-xs mt-0.5 text-gray-400">{line.sizeLabel}{Object.values(line.mods || {}).flat().map(m => ` • ${lang === 'PL' && m.namePl ? m.namePl : m.name}`).join('')}</div> 
                 </div> 
                 <button onClick={() => onRemove(line.lineId)} className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-red-400 hover:bg-red-50"><X size={14} /></button> 
               </div> 
@@ -650,7 +666,7 @@ function TrackOrderModal({ onClose, lang }) {
                       </div>
                       <div className="space-y-2 mb-4">
                         {order.items.map((item, idx) => (
-                          <div key={idx} className="text-sm"><div className="font-semibold text-gray-800 flex items-start gap-1.5"><span className="text-gray-500">{item.qty}x</span> {item.name}</div><div className="text-xs text-gray-500 ml-5 mt-0.5">{item.sizeLabel}{item.mods && Object.values(item.mods).flat().map(m => ` · ${m.name}`).join('')}</div></div>
+                          <div key={idx} className="text-sm"><div className="font-semibold text-gray-800 flex items-start gap-1.5"><span className="text-gray-500">{item.qty}x</span> {item.name}</div><div className="text-xs text-gray-500 ml-5 mt-0.5">{item.sizeLabel}{item.mods && Object.values(item.mods).flat().map(m => ` · ${lang === 'PL' && m.namePl ? m.namePl : m.name}`).join('')}</div></div>
                         ))}
                       </div>
                       <div className="text-xs font-bold flex items-center gap-1 pt-3 border-t border-black/5 text-[#7a964a]"><Clock size={12} /> Pickup: {new Date(order.pickup_time).toLocaleTimeString('en-US', { timeZone: 'Europe/Warsaw', hour: '2-digit', minute:'2-digit', hour12: false })}</div>
@@ -665,8 +681,8 @@ function TrackOrderModal({ onClose, lang }) {
 }
 
 const PROMO_LIST = [
-  { id: 'lody-artisan', name: 'Artisan Ice Cream', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious artisanal ice cream', sizes: [{ label: 'Standard', price: 18.0 }], categoryId: 'ice_cream', icon: '🍨' },
-  { id: 'anaya_ashta', name: 'Anaya with Ashta', image: '', tagline: 'Traditional dessert', sizes: [{ label: 'Standard', price: 36.5 }], categoryId: 'ashta', icon: '🍮' }
+  { id: 'lody-artisan', name: 'Artisan Ice Cream', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious artisanal ice cream', taglinePl: 'Pyszne lody rzemieślnicze', sizes: [{ label: 'Standard', price: 18.0 }], categoryId: 'ice_cream', icon: '🍨' },
+  { id: 'anaya_ashta', name: 'Anaya with Ashta', image: '', tagline: 'Traditional dessert', taglinePl: 'Tradycyjny deser', sizes: [{ label: 'Standard', price: 36.5 }], categoryId: 'ashta', icon: '🍮' }
 ];
 
 function WelcomePromoModal({ onClose, onAdd, lang }) {
@@ -728,8 +744,23 @@ export default function CustomerPage() {
     return () => { supabase.removeChannel(channel); }
   }, [currentUserId]);
 
-  function pickCategory(id) { setActiveCat(id); const el = sectionRefs.current[id]; if (el) window.scrollTo({ top: el.getBoundingClientRect().top - 100, behavior: 'smooth' }); }
-  function scrollToSection(id) { const el = document.getElementById(id); if (el) { const y = el.getBoundingClientRect().top + window.scrollY - 100; window.scrollTo({ top: y, behavior: 'smooth' }); } }
+  function pickCategory(id) { 
+    setActiveCat(id); 
+    const el = sectionRefs.current[id]; 
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 130;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }
+
+  function scrollToSection(id) { 
+    const el = document.getElementById(id); 
+    if (el) { 
+      const y = el.getBoundingClientRect().top + window.scrollY - 130; 
+      window.scrollTo({ top: y, behavior: 'smooth' }); 
+    } 
+  }
+  
   function addToCart(line) { setCart((c) => [...c, line]); setOpenItem(null); setCartOpen(true); }
   function addQuickItem(item, categoryId) {
     const modifiers = getModifiersFor(categoryId, item.id); 
@@ -816,7 +847,8 @@ export default function CustomerPage() {
                               </div>
                             )}
                             <div className="p-5 flex flex-col flex-1 w-full">
-                              <h3 className="font-display font-bold text-xl mb-1">{it.name}</h3><p className="text-xs text-gray-500 line-clamp-2 mb-4 flex-1">{it.tagline}</p>
+                              <h3 className="font-display font-bold text-xl mb-1">{it.name}</h3>
+                              <p className="text-xs text-gray-500 line-clamp-2 mb-4 flex-1">{lang === 'PL' && it.taglinePl ? it.taglinePl : it.tagline}</p>
                               <div className="flex justify-between items-center w-full pt-3 border-t border-gray-50 mt-auto"><span className="font-bold text-lg text-[#7a964a]">{currency(it.sizes[0].price)}</span><span className="w-10 h-10 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#93b45b] group-hover:bg-[#93b45b] group-hover:text-white transition"><Plus size={20}/></span></div>
                             </div>
                           </button>
@@ -852,9 +884,9 @@ export default function CustomerPage() {
                    <div className="flex items-start gap-4"><div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><MapPin size={24} /></div><div><h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">{T[lang].address}</h4><p className="font-semibold text-lg text-[#16261B]">Gagarina 31, 00-753 Warszawa</p></div></div>
                    <div className="flex items-start gap-4"><div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><Clock size={24} /></div><div><h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">{T[lang].openingHours}</h4><p className="font-semibold text-[#16261B]">Mon - Thu: 11:00 - 21:00<br/>Fri - Sun: 11:00 - 22:00</p></div></div>
                    <div className="flex items-start gap-4"><div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><Mail size={24} /></div><div><h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">Contact</h4><p className="font-semibold text-[#16261B]">+48 530022999<br/>libanwszklance@libanwszklance.pl</p></div></div>
-                   <div className="pt-4 border-t border-gray-100 flex items-center gap-4"><span className="font-bold text-gray-400 uppercase text-xs tracking-widest">{T[lang].followUs}</span><a href="YOUR_INSTAGRAM_LINK" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#E4405F] hover:text-white transition shadow-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="YOUR_FACEBOOK_LINK" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#1877F2] hover:text-white transition shadow-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a></div>
+                   <div className="pt-4 border-t border-gray-100 flex items-center gap-4"><span className="font-bold text-gray-400 uppercase text-xs tracking-widest">{T[lang].followUs}</span><a href="https://www.instagram.com/libanwszklance/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#E4405F] hover:text-white transition shadow-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="https://www.facebook.com/profile.php?id=61585610253402" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#1877F2] hover:text-white transition shadow-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a></div>
                 </div>
-                <div className="bg-gray-200 rounded-[2rem] overflow-hidden min-h-[350px] shadow-inner border border-gray-100 relative"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2445.0116827038165!2d21.0346864!3d52.2068997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471ecd037b587a89%3A0xc36706e2329177b6!2sGagarina%2031%2C%2000-753%20Warszawa!5e0!3m2!1str!2spl!4v1713180000000!5m2!1str!2spl" width="100%" height="100%" style={{border:0, position:'absolute', top:0, left:0}} allowFullScreen="" loading="lazy"></iframe></div>
+                <div className="bg-gray-200 rounded-[2rem] overflow-hidden min-h-[350px] shadow-inner border border-gray-100 relative"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2444.970868846337!2d21.03120957605999!3d52.20676775928825!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x452ff6e45d153ed%3A0x592b3c677a0f1893!2sLiban%20w%20szklance!5e0!3m2!1sen!2str!4v1713180000000!5m2!1sen!2str" width="100%" height="100%" style={{border:0, position:'absolute', top:0, left:0}} allowFullScreen="" loading="lazy"></iframe></div>
              </div>
           </section>
         </div>
