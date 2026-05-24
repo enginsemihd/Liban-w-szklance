@@ -79,7 +79,7 @@ const T = {
     heroTitle: 'Liban w Szklance', heroSub: 'Autentyczny Smak.', heroDesc: 'Domowe koktajle, naleśniki i gofry. Libańskie koktajle z serkiem aszta, świeżymi owocami, orzechami i miodem. Zamów online, wybierz slot odbioru i odbierz prosto z naszego lokalu — bez kolejek.', 
     slogan: 'Przyjdź jako gość, wyjdź jako przyjaciel.',
     readyToast: 'Twoje zamówienie jest gotowe do odbioru! Do zobaczenia.', preparingToast: 'Świetna wiadomość! Twoje zamówienie jest przygotowywane.',
-    trackOrder: 'Śledź Zamówienie', trackTitle: 'Śledź swoje zamówienie', phoneLabel: 'Numer telefonu', checkStatus: 'Sprawdź status', notFound: 'Brak aktywnych zamówień dla tego numeru.', 
+    trackOrder: 'Śledź Zamówienie', trackTitle: 'Śledź swoje zamówienie', phoneLabel: 'Numer telefonu', checkStatus: 'Sprawdź status', notFound: 'Brak aktywnego zamówienia dla tego numeru.', 
     status_new: 'Przyjęte', status_preparing: 'W przygotowaniu', status_delivered: 'Gotowy',
     promoTitle: 'Specjalnie dla Ciebie!', promoSub: 'Pozwól sobie na coś słodkiego.', upsellTitle: 'Uzupełnij zamówienie', upsellDesc: 'Może dodasz te libańskie klasyki?', extrasTitle: 'Dodatki', bag: 'Torba na wynos',
     capacityError: 'Przepraszamy, ten slot czasowy jest pełny. Wybierz inny.',
@@ -106,112 +106,95 @@ const CATEGORIES = [
   { id: 'ice_cream', name: 'Ice Cream', namePl: 'Lody', icon: '🍨' },
   { id: 'ashta', name: 'Ashta', namePl: 'Aszta', icon: '🍮' },
   { id: 'combo', name: 'Combo', namePl: 'Combo', icon: '🎁' },
-  { id: 'drinks', name: 'Drinks', namePl: 'Napoje', icon: '☕' },
 ];
 
 const MENU_ITEMS = {
   cocktails: [
-    { id: 'tripoli', name: 'TRIPOLI', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/trypolis.jpg', tagline: 'seasonal fruits, strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake truskawkowy (truskawka, mleko, banan), aszta (libański serek), mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 28.0 }, { label: '500ml', price: 34.0 }] },
-    { id: 'sidon', name: 'SIDON', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/sydon.png', tagline: 'seasonal fruits, avocado shake (milk, avocado), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake z awokado (mleko, awokado), aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 37.0 }] },
-    { id: 'geita', name: 'GEITA', image: '', tagline: 'seasonal fruits, strawberry shake (strawberry, milk, banana), pineapple, mango, ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake truskawkowy, ananas, mango, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 34.0 }] },
-    { id: 'batroun', name: 'BATROUN', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/batroun.png', tagline: 'seasonal fruits, avocado shake (milk, avocado), pineapple, mango, ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake z awokado, ananas, mango, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 38.0 }], popular: true },
-    { id: 'jounieh', name: 'JOUNIEH', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jounieh%20.png', tagline: 'seasonal fruits, avocado shake (milk, avocado), strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake z awokado, shake truskawkowy, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 29.0 }, { label: '500ml', price: 35.0 }] },
-    { id: 'beirut', name: 'BEIRUT', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/bejrut-1.png', tagline: 'avocado shake (milk, avocado), pineapple, mango, ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'shake z awokado, ananas, mango, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 33.0 }, { label: '500ml', price: 38.0 }], popular: true },
-    { id: 'baalbek', name: 'BAALBEK', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Koktajl%20baalbek.jpg', tagline: 'seasonal fruits, mango pulp, strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), pineapple, mango, mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, pulpa z mango, shake truskawkowy, aszta, ananas, mango, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 34.0 }] },
-    { id: 'zahle', name: 'ZAHLE', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Zahle%20.png', tagline: 'strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'shake truskawkowy, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 26.0 }, { label: '500ml', price: 29.0 }] },
-    { id: 'cedars', name: 'CEDARS', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cedry.png', tagline: 'avocado shake (milk, avocado), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'shake z awokado, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 31.0 }, { label: '500ml', price: 36.0 }] },
-    { id: 'jezzin', name: 'JEZZIN', image: '', tagline: 'avocado shake (milk, avocado), strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'shake z awokado, shake truskawkowy, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 29.0 }, { label: '500ml', price: 34.0 }] },
+    { id: 'tripoli', name: 'TRIPOLI', namePl: 'TRIPOLI', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/trypolis.jpg', tagline: 'seasonal fruits, strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake truskawkowy (truskawka, mleko, banan), aszta (libański serek), mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 28.0 }, { label: '500ml', price: 34.0 }] },
+    { id: 'sidon', name: 'SIDON', namePl: 'SIDON', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/sydon.png', tagline: 'seasonal fruits, avocado shake (milk, avocado), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake z awokado (mleko, awokado), aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 37.0 }] },
+    { id: 'geita', name: 'GEITA', namePl: 'GEITA', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/geita.jpeg', tagline: 'seasonal fruits, strawberry shake (strawberry, milk, banana), pineapple, mango, ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake truskawkowy, ananas, mango, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 34.0 }] },
+    { id: 'batroun', name: 'BATROUN', namePl: 'BATROUN', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/batroun.png', tagline: 'seasonal fruits, avocado shake (milk, avocado), pineapple, mango, ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake z awokado, ananas, mango, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 32.0 }, { label: '500ml', price: 38.0 }], popular: true },
+    { id: 'jounieh', name: 'JOUNIEH', namePl: 'JOUNIEH', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jounieh%20.png', tagline: 'seasonal fruits, avocado shake (milk, avocado), strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, shake z awokado, shake truskawkowy, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 29.0 }, { label: '500ml', price: 35.0 }] },
+    { id: 'beirut', name: 'BEIRUT', namePl: 'BEIRUT', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/bejrut-1.png', tagline: 'avocado shake (milk, avocado), pineapple, mango, ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'shake z awokado, ananas, mango, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 33.0 }, { label: '500ml', price: 38.0 }], popular: true },
+    { id: 'baalbek', name: 'BAALBEK', namePl: 'BAALBEK', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Koktajl%20baalbek.jpg', tagline: 'seasonal fruits, mango pulp, strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), pineapple, mango, mix nuts, raisins, honey', taglinePl: 'owoce sezonowe, pulpa z mango, shake truskawkowy, aszta, ananas, mango, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 30.0 }, { label: '500ml', price: 34.0 }] },
+    { id: 'zahle', name: 'ZAHLE', namePl: 'ZAHLE', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Zahle%20.png', tagline: 'strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'shake truskawkowy, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 26.0 }, { label: '500ml', price: 29.0 }] },
+    { id: 'cedars', name: 'CEDARS', namePl: 'CEDARS', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/cedry.png', tagline: 'avocado shake (milk, avocado), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'shake z awokado, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 31.0 }, { label: '500ml', price: 36.0 }] },
+    { id: 'jezzin', name: 'JEZZIN', namePl: 'JEZZIN', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jezzin.jpeg', tagline: 'avocado shake (milk, avocado), strawberry shake (strawberry, milk, banana), ashta (lebanese cheese), mix nuts, raisins, honey', taglinePl: 'shake z awokado, shake truskawkowy, aszta, mix orzechów, rodzynki, miód', sizes: [{ label: '300ml', price: 29.0 }, { label: '500ml', price: 34.0 }] },
   ],
   protein_shakes: [
-    { id: 'mango_power', name: 'MANGO POWER', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Mango%20Power%20.jpg', tagline: 'mango, Greek yogurt, vanilla whey protein, almond milk, honey', taglinePl: 'mango, jogurt grecki, białko waniliowe, mleko migdałowe, miód', sizes: [{ label: '400ml', price: 25.0 }] },
-    { id: 'banana_dates_boost', name: 'BANANA DATES BOOST', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Banana%20Dates%20Boost%20.jpg', tagline: 'banana, dates, peanut butter, vanilla protein, oat milk, cinnamon', taglinePl: 'banan, daktyle, masło orzechowe, białko waniliowe, mleko owsiane, cynamon', sizes: [{ label: '400ml', price: 25.0 }] },
-    { id: 'berry_fit', name: 'BERRY FIT', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Berry%20Fit.jpg', tagline: 'strawberries, blueberries, Greek yogurt, vanilla protein, almond milk', taglinePl: 'truskawki, borówki, jogurt grecki, białko waniliowe, mleko migdałowe', sizes: [{ label: '400ml', price: 25.0 }] },
-    { id: 'coconut_almond_energy', name: 'COCONUT ALMOND ENERGY', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Coconut%20Almond%20Energy.jpg', tagline: 'coconut milk, peanut butter, chocolate protein, rolled oats', taglinePl: 'mleko kokosowe, masło orzechowe, białko czekoladowe, płatki owsiane', sizes: [{ label: '400ml', price: 25.0 }] },
-    { id: 'chocolate_dates_delight', name: 'CHOCOLATE DATES DELIGHT', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Chocolate%20Dates%20Delight.jpg', tagline: 'dates, cocoa, chocolate protein, oat milk', taglinePl: 'daktyle, kakao, białko czekoladowe, mleko owsiane', sizes: [{ label: '400ml', price: 25.0 }] },
+    { id: 'mango_power', name: 'MANGO POWER', namePl: 'MANGO POWER', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Mango%20Power%20.jpg', tagline: 'mango, Greek yogurt, vanilla whey protein, almond milk, honey', taglinePl: 'mango, jogurt grecki, białko waniliowe, mleko migdałowe, miód', sizes: [{ label: '400ml', price: 25.0 }] },
+    { id: 'banana_dates_boost', name: 'BANANA DATES BOOST', namePl: 'BANANA DATES BOOST', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Banana%20Dates%20Boost%20.jpg', tagline: 'banana, dates, peanut butter, vanilla protein, oat milk, cinnamon', taglinePl: 'banan, daktyle, masło orzechowe, białko waniliowe, mleko owsiane, cynamon', sizes: [{ label: '400ml', price: 25.0 }] },
+    { id: 'berry_fit', name: 'BERRY FIT', namePl: 'BERRY FIT', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Berry%20Fit.jpg', tagline: 'strawberries, blueberries, Greek yogurt, vanilla protein, almond milk', taglinePl: 'truskawki, borówki, jogurt grecki, białko waniliowe, mleko migdałowe', sizes: [{ label: '400ml', price: 25.0 }] },
+    { id: 'coconut_almond_energy', name: 'COCONUT ALMOND ENERGY', namePl: 'COCONUT ALMOND ENERGY', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Coconut%20Almond%20Energy.jpg', tagline: 'coconut milk, peanut butter, chocolate protein, rolled oats', taglinePl: 'mleko kokosowe, masło orzechowe, białko czekoladowe, płatki owsiane', sizes: [{ label: '400ml', price: 25.0 }] },
+    { id: 'chocolate_dates_delight', name: 'CHOCOLATE DATES DELIGHT', namePl: 'CHOCOLATE DATES DELIGHT', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Chocolate%20Dates%20Delight.jpg', tagline: 'dates, cocoa, chocolate protein, oat milk', taglinePl: 'daktyle, kakao, białko czekoladowe, mleko owsiane', sizes: [{ label: '400ml', price: 25.0 }] },
   ],
   lebanese_speciality: [
-    { id: 'jallab', name: 'JALLAB', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jallab.jpg', tagline: '(date syrup) with almonds and raisins', taglinePl: '(syrop z daktyli) z migdałami i rodzynkami', sizes: [{ label: '400ml', price: 18.0 }] },
-    { id: 'lemonade', name: 'LEMONADE', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada.jpg', tagline: 'Fresh homemade lemonade', taglinePl: 'Świeża domowa lemoniada', sizes: [{ label: '400ml', price: 18.0 }] },
-    { id: 'mint_lemonade', name: 'MINT LEMONADE', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada%20mieta.jpg', tagline: 'Lemonade with fresh mint', taglinePl: 'Lemoniada ze świeżą miętą', sizes: [{ label: '400ml', price: 19.0 }] },
+    { id: 'jallab', name: 'JALLAB', namePl: 'JALLAB', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jallab%20(1).jpg', tagline: '(date syrup) with almonds and raisins', taglinePl: '(syrop z daktyli) z migdałami i rodzynkami', sizes: [{ label: '400ml', price: 18.0 }] },
+    { id: 'lemonade', name: 'LEMONADE', namePl: 'LEMONIADA', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada.jpg', tagline: 'Fresh homemade lemonade', taglinePl: 'Świeża domowa lemoniada', sizes: [{ label: '400ml', price: 18.0 }] },
+    { id: 'mint_lemonade', name: 'MINT LEMONADE', namePl: 'LEMONIADA Z MIĘTĄ', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lemoniada%20mieta.jpg', tagline: 'Lemonade with fresh mint', taglinePl: 'Lemoniada ze świeżą miętą', sizes: [{ label: '400ml', price: 19.0 }] },
   ],
   juices: [
-    { id: 'orange', name: 'ORANGE', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pomarancza.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
-    { id: 'carrot', name: 'CARROT', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchewka.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
-    { id: 'apple', name: 'APPLE', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jablko.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
-    { id: 'pomegranate', name: 'POMEGRANATE', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/granat.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
-    { id: 'pineapple', name: 'PINEAPPLE', image: '', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
-    { id: 'strawberry', name: 'STRAWBERRY', image: '', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
-    { id: 'mango', name: 'MANGO', image: '', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
-    { id: 'melon', name: 'MELON', image: '', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
+    { id: 'orange', name: 'ORANGE', namePl: 'POMARAŃCZA', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pomarancza.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
+    { id: 'carrot', name: 'CARROT', namePl: 'MARCHEWKA', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchewka.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
+    { id: 'apple', name: 'APPLE', namePl: 'JABŁKO', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/jablko.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
+    { id: 'pomegranate', name: 'POMEGRANATE', namePl: 'GRANAT', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/granat.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
+    { id: 'pineapple', name: 'PINEAPPLE', namePl: 'ANANAS', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/ananas%20(1).jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
+    { id: 'strawberry', name: 'STRAWBERRY', namePl: 'TRUSKAWKA', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/truskawka%20sok.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
+    { id: 'mango', name: 'MANGO', namePl: 'MANGO', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mango.jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
+    { id: 'melon', name: 'MELON', namePl: 'MELON', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/melon%20(1).jpg', tagline: 'Fresh juice', taglinePl: 'Świeży sok', sizes: [{ label: '400ml', price: 20.0 }] },
   ],
   mixed_juices: [
-    { id: 'mix_1', name: 'Carrot, orange, ginger', image: '', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 18.0 }] },
-    { id: 'mix_2', name: 'Carrot, orange', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchew%20pomarancz.jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 17.0 }] },
-    { id: 'mix_3', name: 'Orange, kiwi, ginger', image: '', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 19.0 }] },
-    { id: 'mix_4', name: 'Pineapple, kiwi', image: '', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
-    { id: 'mix_5', name: 'Orange, grapefruit', image: '', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 18.0 }] },
-    { id: 'mix_6', name: 'Strawberry, mango', image: '', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
-    { id: 'mix_7', name: 'Pineapple, pomegranate', image: '', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
-    { id: 'mix_8', name: 'Kiwi, orange, strawberry', image: '', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 23.0 }] },
-    { id: 'mix_9', name: 'Mango, grapefruit, orange, strawberry', image: '', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 23.0 }] },
-    { id: 'mix_10', name: 'Create your own juice', image: '', tagline: 'Starting from 2 fruits', taglinePl: 'Od 2 owoców', sizes: [{ label: '400ml', price: 24.0 }] },
+    { id: 'mix_1', name: 'Carrot, orange, ginger', namePl: 'Marchewka, pomarańcza, imbir', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchewka.jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 18.0 }] },
+    { id: 'mix_2', name: 'Carrot, orange', namePl: 'Marchewka, pomarańcza', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/marchew%20pomarancz.jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 17.0 }] },
+    { id: 'mix_3', name: 'Orange, kiwi, ginger', namePl: 'Pomarańcza, kiwi, imbir', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pomarancza.jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 19.0 }] },
+    { id: 'mix_4', name: 'Pineapple, kiwi', namePl: 'Ananas, kiwi', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/ananas%20(1).jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
+    { id: 'mix_5', name: 'Orange, grapefruit', namePl: 'Pomarańcza, grejpfrut', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pomarancza.jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 18.0 }] },
+    { id: 'mix_6', name: 'Strawberry, mango', namePl: 'Truskawka, mango', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/truskawki%20mango%20(1).jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
+    { id: 'mix_7', name: 'Pineapple, pomegranate', namePl: 'Ananas, granat', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/ananas%20(1).jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 22.0 }] },
+    { id: 'mix_8', name: 'Kiwi, orange, strawberry', namePl: 'Kiwi, pomarańcza, truskawka', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kiwi,%20pomaranc%20truskawki.jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 23.0 }] },
+    { id: 'mix_9', name: 'Mango, grapefruit, orange, strawberry', namePl: 'Mango, grejpfrut, pomarańcza, truskawka', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mango.jpg', tagline: 'Mixed fresh juice', taglinePl: 'Mieszany świeży sok', sizes: [{ label: '400ml', price: 23.0 }] },
+    { id: 'mix_10', name: 'Create your own juice', namePl: 'Skomponuj własny sok', image: '', tagline: 'Starting from 2 fruits', taglinePl: 'Od 2 owoców', sizes: [{ label: '400ml', price: 24.0 }] },
   ],
   waffles: [
-    { id: 'waffle_1', name: 'Mascarpone', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20mascarpone.jpg', tagline: 'mix fruits, honey, mix nuts', taglinePl: 'mix owoców, miód, mix orzechów', sizes: [{ label: '~250gr', price: 27.0 }] },
-    { id: 'waffle_2', name: 'Whipped cream', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20bita%20smietana%20i%20mix%20owocow.jpg', tagline: 'mix fruits, chocolate sauce', taglinePl: 'mix owoców, sos czekoladowy', sizes: [{ label: '~250gr', price: 23.0 }] },
-    { id: 'waffle_3', name: 'Strawberry jam', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20dzem%20truskawky.jpg', tagline: 'whipped cream, strawberry sauce', taglinePl: 'bita śmietana, sos truskawkowy', sizes: [{ label: '~250gr', price: 23.0 }] },
-    { id: 'waffle_4', name: 'Ashta (lebanese cheese)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'mix fruits, honey, mix nuts', taglinePl: 'mix owoców, miód, mix orzechów', sizes: [{ label: '~250gr', price: 28.0 }], popular: true },
-    { id: 'waffle_5', name: 'Nutella, banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20nutella.jpg', tagline: 'whipped cream', taglinePl: 'bita śmietana', sizes: [{ label: '~250gr', price: 25.0 }] },
-    { id: 'waffle_6', name: 'Powdered sugar', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20cuker.jpg', tagline: 'Classic waffle', taglinePl: 'Klasyczny gofr z cukrem pudrem', sizes: [{ label: '~250gr', price: 13.0 }] },
+    { id: 'waffle_1', name: 'Mascarpone', namePl: 'Mascarpone', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20mascarpone.jpg', tagline: 'mix fruits, honey, mix nuts', taglinePl: 'mix owoców, miód, mix orzechów', sizes: [{ label: '~250gr', price: 27.0 }] },
+    { id: 'waffle_2', name: 'Whipped cream', namePl: 'Bita śmietana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20bita%20smietana%20i%20mix%20owocow.jpg', tagline: 'mix fruits, chocolate sauce', taglinePl: 'mix owoców, sos czekoladowy', sizes: [{ label: '~250gr', price: 23.0 }] },
+    { id: 'waffle_3', name: 'Strawberry jam', namePl: 'Dżem truskawkowy', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20dzem%20truskawky.jpg', tagline: 'whipped cream, strawberry sauce', taglinePl: 'bita śmietana, sos truskawkowy', sizes: [{ label: '~250gr', price: 23.0 }] },
+    { id: 'waffle_4', name: 'Ashta (lebanese cheese)', namePl: 'Aszta (libański serek)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'mix fruits, honey, mix nuts', taglinePl: 'mix owoców, miód, mix orzechów', sizes: [{ label: '~250gr', price: 28.0 }], popular: true },
+    { id: 'waffle_5', name: 'Nutella, banana', namePl: 'Nutella, banan', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20nutella.jpg', tagline: 'whipped cream', taglinePl: 'bita śmietana', sizes: [{ label: '~250gr', price: 25.0 }] },
+    { id: 'waffle_6', name: 'Powdered sugar', namePl: 'Cukier puder', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20cuker.jpg', tagline: 'Classic waffle', taglinePl: 'Klasyczny gofr z cukrem pudrem', sizes: [{ label: '~250gr', price: 13.0 }] },
   ],
   sweet_crepes: [
-    { id: 'sc_1', name: 'Nutella, banana, hazelnuts', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20nutella%20banana.jpg', tagline: 'chocolate syrup, whipped cream, berries', taglinePl: 'syrop czekoladowy, bita śmietana, owoce leśne', sizes: [{ label: '~350gr', price: 27.0 }] },
-    { id: 'sc_2', name: 'Nutella, banana, hazelnuts, strawberry, pineapple', image: '', tagline: 'chocolate syrup, whipped cream, berries', taglinePl: 'syrop czekoladowy, bita śmietana, owoce leśne', sizes: [{ label: '~350gr', price: 30.0 }] },
-    { id: 'sc_3', name: 'Nutella, pistachio butter, banana', image: '', tagline: 'pistachios, kadaif', taglinePl: 'pistacje, ciasto kataifi', sizes: [{ label: '~350gr', price: 30.0 }] },
-    { id: 'sc_4', name: 'Kinder, Nutella, banana', image: '', tagline: 'chocolate syrup, whipped cream', taglinePl: 'syrop czekoladowy, bita śmietana', sizes: [{ label: '~350gr', price: 30.0 }] },
-    { id: 'sc_5', name: 'Oreo chocolate, white chocolate', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/oreo.jpg', tagline: 'white chocolate syrup, whipped cream', taglinePl: 'syrop z białej czekolady, bita śmietana', sizes: [{ label: '~350gr', price: 30.0 }] },
-    { id: 'sc_6', name: 'KitKat, Digestive cookies, banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kitkat.jpg', tagline: 'chocolate syrup, whipped cream', taglinePl: 'syrop czekoladowy, bita śmietana', sizes: [{ label: '~350gr', price: 30.0 }] },
-    { id: 'sc_7', name: 'Lotus cream, Lotus biscuits', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lotus.jpg', tagline: 'caramel syrup, peanuts', taglinePl: 'syrop karmelowy, orzeszki ziemne', sizes: [{ label: '~350gr', price: 30.0 }] },
-    { id: 'sc_8', name: 'Mascarpone, mango', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mango%20mascarpone.jpg', tagline: 'mango puree, whipped cream, almonds', taglinePl: 'puree z mango, bita śmietana, migdały', sizes: [{ label: '~350gr', price: 30.0 }] },
-    { id: 'sc_9', name: 'Mascarpone, strawberry', image: '', tagline: 'strawberry jam, whipped cream, black sesame, strawberries', taglinePl: 'dżem truskawkowy, bita śmietana, czarny sezam, truskawki', sizes: [{ label: '~350gr', price: 28.0 }] },
-    { id: 'sc_10', name: 'Peanut butter, banana', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/maslo%20orzechowe.jpg', tagline: 'chocolate syrup, whipped cream, peanuts', taglinePl: 'syrop czekoladowy, bita śmietana, orzeszki ziemne', sizes: [{ label: '~350gr', price: 27.0 }] },
-    { id: 'sc_11', name: 'Cottage cheese with cream, strawberry jam', image: '', tagline: 'strawberry syrup, strawberries', taglinePl: 'syrop truskawkowy, truskawki', sizes: [{ label: '~350gr', price: 26.0 }] },
-    { id: 'sc_12', name: 'Cottage cheese with cream, raspberry jam', image: '', tagline: 'raspberry syrup, raspberries', taglinePl: 'syrop malinowy, maliny', sizes: [{ label: '~350gr', price: 26.0 }] },
-    { id: 'sc_13', name: 'Apple mousse', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mus%20jalbkowy.jpg', tagline: '12% cream, cinnamon, apple', taglinePl: 'śmietana 12%, cynamon, jabłko', sizes: [{ label: '~350gr', price: 27.0 }] },
+    { id: 'sc_1', name: 'Nutella, banana, hazelnuts', namePl: 'Nutella, banan, orzechy laskowe', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20nutella%20banana.jpg', tagline: 'chocolate syrup, whipped cream, berries', taglinePl: 'syrop czekoladowy, bita śmietana, owoce leśne', sizes: [{ label: '~350gr', price: 27.0 }] },
+    { id: 'sc_2', name: 'Nutella, banana, hazelnuts, strawberry, pineapple', namePl: 'Nutella, banan, orzechy laskowe, truskawka, ananas', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/nalesnik%20nutella%20banan%20orzechy%20laskowe%20truskawki%20ananas.jpg', tagline: 'chocolate syrup, whipped cream, berries', taglinePl: 'syrop czekoladowy, bita śmietana, owoce leśne', sizes: [{ label: '~350gr', price: 30.0 }] },
+    { id: 'sc_3', name: 'Nutella, pistachio butter, banana', namePl: 'Nutella, masło pistacjowe, banan', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/pistacjo%20(1).jpg', tagline: 'pistachios, kadaif', taglinePl: 'pistacje, ciasto kataifi', sizes: [{ label: '~350gr', price: 30.0 }] },
+    { id: 'sc_4', name: 'Kinder, Nutella, banana', namePl: 'Kinder, Nutella, banan', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kinder.jpg', tagline: 'chocolate syrup, whipped cream', taglinePl: 'syrop czekoladowy, bita śmietana', sizes: [{ label: '~350gr', price: 30.0 }] },
+    { id: 'sc_5', name: 'Oreo chocolate, white chocolate', namePl: 'Czekolada Oreo, biała czekolada', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/oreo.jpg', tagline: 'white chocolate syrup, whipped cream', taglinePl: 'syrop z białej czekolady, bita śmietana', sizes: [{ label: '~350gr', price: 30.0 }] },
+    { id: 'sc_6', name: 'KitKat, Digestive cookies, banana', namePl: 'KitKat, ciastka Digestive, banan', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/kitkat.jpg', tagline: 'chocolate syrup, whipped cream', taglinePl: 'syrop czekoladowy, bita śmietana', sizes: [{ label: '~350gr', price: 30.0 }] },
+    { id: 'sc_7', name: 'Lotus cream, Lotus biscuits', namePl: 'Krem Lotus, ciastka Lotus', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/lotus.jpg', tagline: 'caramel syrup, peanuts', taglinePl: 'syrop karmelowy, orzeszki ziemne', sizes: [{ label: '~350gr', price: 30.0 }] },
+    { id: 'sc_8', name: 'Mascarpone, mango', namePl: 'Mascarpone, mango', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mango%20mascarpone.jpg', tagline: 'mango puree, whipped cream, almonds', taglinePl: 'puree z mango, bita śmietana, migdały', sizes: [{ label: '~350gr', price: 30.0 }] },
+    { id: 'sc_9', name: 'Mascarpone, strawberry', namePl: 'Mascarpone, truskawka', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mascarpone%20truskawka%20.jpg', tagline: 'strawberry jam, whipped cream, black sesame, strawberries', taglinePl: 'dżem truskawkowy, bita śmietana, czarny sezam, truskawki', sizes: [{ label: '~350gr', price: 28.0 }] },
+    { id: 'sc_10', name: 'Peanut butter, banana', namePl: 'Masło orzechowe, banan', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/maslo%20orzechowe.jpg', tagline: 'chocolate syrup, whipped cream, peanuts', taglinePl: 'syrop czekoladowy, bita śmietana, orzeszki ziemne', sizes: [{ label: '~350gr', price: 27.0 }] },
+    { id: 'sc_11', name: 'Cottage cheese with cream, strawberry jam', namePl: 'Twarożek ze śmietaną, dżem truskawkowy', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/logo.jpeg', tagline: 'strawberry syrup, strawberries', taglinePl: 'syrop truskawkowy, truskawki', sizes: [{ label: '~350gr', price: 26.0 }] },
+    { id: 'sc_12', name: 'Cottage cheese with cream, raspberry jam', namePl: 'Twarożek ze śmietaną, dżem malinowy', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/logo.jpeg', tagline: 'raspberry syrup, raspberries', taglinePl: 'syrop malinowy, maliny', sizes: [{ label: '~350gr', price: 26.0 }] },
+    { id: 'sc_13', name: 'Apple mousse', namePl: 'Mus jabłkowy', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mus%20jalbkowy.jpg', tagline: '12% cream, cinnamon, apple', taglinePl: 'śmietana 12%, cynamon, jabłko', sizes: [{ label: '~350gr', price: 27.0 }] },
   ],
   savory_crepes: [
-    { id: 'sav_1', name: 'Labneh (lebanese cheese)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/labneh.jpg', tagline: 'olive oil, zaatar, olives, cherry tomatoes, cucumber, arugula', taglinePl: 'oliwa, zaatar, oliwki, pomidorki cherry, ogórek, rukola', sizes: [{ label: '~350gr', price: 28.0 }] },
-    { id: 'sav_2', name: 'Yellow cheese, ham (pork/chicken)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20ser%20zolty.jpg', tagline: 'mushroom, oregano, cherry tomatoes, cucumber, arugula', taglinePl: 'pieczarki, oregano, pomidorki cherry, ogórek, rukola', sizes: [{ label: '~350gr', price: 28.0 }] },
-    { id: 'sav_3', name: 'Mozzarella', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mozarella.jpg', tagline: 'oregano, mushroom, dried tomatoes, olives, cherry tomatoes, cucumber, arugula', taglinePl: 'oregano, pieczarki, suszone pomidory, oliwki, pomidorki cherry, ogórek, rukola', sizes: [{ label: '~350gr', price: 28.0 }] },
+    { id: 'sav_1', name: 'Labneh (lebanese cheese)', namePl: 'Labneh (libański serek)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/labneh.jpg', tagline: 'olive oil, zaatar, olives, cherry tomatoes, cucumber, arugula', taglinePl: 'oliwa, zaatar, oliwki, pomidorki cherry, ogórek, rukola', sizes: [{ label: '~350gr', price: 28.0 }] },
+    { id: 'sav_2', name: 'Yellow cheese, ham (pork/chicken)', namePl: 'Ser żółty, szynka (wieprzowa/drobiowa)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20ser%20zolty.jpg', tagline: 'mushroom, oregano, cherry tomatoes, cucumber, arugula', taglinePl: 'pieczarki, oregano, pomidorki cherry, ogórek, rukola', sizes: [{ label: '~350gr', price: 28.0 }] },
+    { id: 'sav_3', name: 'Mozzarella', namePl: 'Mozzarella', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/mozarella.jpg', tagline: 'oregano, mushroom, dried tomatoes, olives, cherry tomatoes, cucumber, arugula', taglinePl: 'oregano, pieczarki, suszone pomidory, oliwki, pomidorki cherry, ogórek, rukola', sizes: [{ label: '~350gr', price: 28.0 }] },
   ],
   ice_cream: [
-    { id: 'lody-artisan', name: 'Natural Icecream', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious artisanal ice cream', taglinePl: 'Pyszne lody naturalne', sizes: [{ label: '80g', price: 10.0 }] },
-    { id: 'lody-dog', name: 'Ice Cream for Dogs', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/icecreamfordogs.png', tagline: 'Special dog-friendly ice cream in a cup', taglinePl: 'Specjalne lody dla psów w kubku', sizes: [{ label: '1 Cup', price: 12.0 }] },
+    { id: 'lody-artisan', name: 'Natural Icecream', namePl: 'Lody Naturalne', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious artisanal ice cream', taglinePl: 'Pyszne lody naturalne', sizes: [{ label: '80g', price: 10.0 }] },
+    { id: 'lody-dog', name: 'Ice Cream for Dogs', namePl: 'Lody dla psów', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/icecreamfordogs.png', tagline: 'Special dog-friendly ice cream in a cup', taglinePl: 'Specjalne lody dla psów w kubku', sizes: [{ label: '1 Cup', price: 12.0 }] },
   ],
   ashta: [
-    { id: 'annaya', name: 'ANNAYA', image: '', tagline: 'ashta (lebanese cheese), mix fruits, honey, mix nuts', taglinePl: 'aszta, mix owoców, miód, mix orzechów', sizes: [{ label: '~350gr', price: 30.0 }] },
-    { id: 'kadisha', name: 'KADISHA', image: '', tagline: 'fruit platter (choose your own fruits)', taglinePl: 'półmisek owoców (wybierz własne owoce)', sizes: [{ label: '~350gr', price: 23.0 }] },
-    { id: 'ashta-fruits', name: 'Ashta & Fruits', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/aszta.jpeg', tagline: 'Authentic Lebanese ashta cream served with fruits', taglinePl: 'Autentyczny libański krem aszta serwowany z owocami', sizes: [{ label: '500g', price: 92.5 }, { label: '1kg', price: 180.0 }] },
-    { id: 'katayef', name: 'Katayef', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/katayef.jpeg', tagline: 'Lebanese sweet stuffed with ashta', taglinePl: 'Libański słodki deser faszerowany asztą', sizes: [{ label: 'Standard', price: 30.0 }] }
+    { id: 'annaya', name: 'ANNAYA', namePl: 'ANNAYA', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/ANNAYA.jpg', tagline: 'ashta (lebanese cheese), mix fruits, honey, mix nuts', taglinePl: 'aszta, mix owoców, miód, mix orzechów', sizes: [{ label: '350g', price: 30.0 }] },
+    { id: 'kadisha', name: 'KADISHA', namePl: 'KADISHA', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Kadisza.jpg', tagline: 'fruit platter (choose your own fruits)', taglinePl: 'półmisek owoców (wybierz własne owoce)', sizes: [{ label: '350g', price: 23.0 }] },
+    { id: 'ashta-fruits', name: 'Ashta & Fruits', namePl: 'Aszta i Owoce', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/aszta.jpeg', tagline: 'Authentic Lebanese ashta cream served with fruits', taglinePl: 'Autentyczny libański krem aszta serwowany z owocami', sizes: [{ label: '500g', price: 92.5 }, { label: '1kg', price: 180.0 }] },
+    { id: 'katayef', name: 'Katayef', namePl: 'Katayef', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/katayef.jpeg', tagline: 'Lebanese sweet stuffed with ashta', taglinePl: 'Libański słodki deser faszerowany asztą', sizes: [{ label: '1 piece', price: 5.0 }, { label: '6 pieces', price: 27.0 }, { label: '12 pieces', price: 48.0 }] }
   ],
   combo: [
-    { id: 'combo_1', name: 'Combo: Fettuccine Pancakes', image: '', tagline: 'Choice of fresh juice (orange/apple) or lemonade + fettuccine pancakes — choice of toppings', taglinePl: 'Wybór świeżego soku (pomarańcza/jabłko) lub lemoniady + naleśniki fettuccine — wybór dodatków', sizes: [{ label: '400ml + 250gr', price: 35.0 }] },
-  ],
-  drinks: [
-    { id: 'water_still', name: 'Still water', image: '', tagline: 'Mineral water', taglinePl: 'Woda niegazowana', sizes: [{ label: '330ml', price: 6.0 }] },
-    { id: 'water_sparkling', name: 'Sparkling water', image: '', tagline: 'Mineral water', taglinePl: 'Woda gazowana', sizes: [{ label: '330ml', price: 6.0 }] },
-    { id: 'tea_mint', name: 'Lebanese tea with mint', image: '', tagline: 'Hot tea', taglinePl: 'Gorąca herbata', sizes: [{ label: 'Standard', price: 12.0 }] },
-    { id: 'tea_kardamon', name: 'Lebanese tea with kardamon', image: '', tagline: 'Hot tea', taglinePl: 'Gorąca herbata', sizes: [{ label: 'Standard', price: 12.0 }] },
-    { id: 'tea_cinnamon', name: 'Lebanese tea with cinnamon', image: '', tagline: 'Hot tea', taglinePl: 'Gorąca herbata', sizes: [{ label: 'Standard', price: 12.0 }] },
-    { id: 'tea_promax', name: 'Lebanese tea Pro Max', image: '', tagline: 'Hot tea', taglinePl: 'Gorąca herbata', sizes: [{ label: 'Standard', price: 13.0 }] },
-    { id: 'tea_winter', name: 'Polish winter tea', image: '', tagline: 'Warming winter tea', taglinePl: 'Rozgrzewająca zimowa herbata', sizes: [{ label: 'Standard', price: 18.0 }] },
-    { id: 'coffee_lebanese', name: 'Lebanese coffee', image: '', tagline: 'Traditional coffee', taglinePl: 'Tradycyjna kawa', sizes: [{ label: 'Standard', price: 10.0 }] },
-    { id: 'coffee_espresso', name: 'Espresso', image: '', tagline: 'Strong coffee', taglinePl: 'Mocna kawa', sizes: [{ label: 'Standard', price: 10.0 }] },
-    { id: 'coffee_doppio', name: 'Doppio', image: '', tagline: 'Double espresso', taglinePl: 'Podwójne espresso', sizes: [{ label: 'Standard', price: 12.0 }] },
-    { id: 'coffee_americano', name: 'Americano', image: '', tagline: 'Black coffee', taglinePl: 'Czarna kawa', sizes: [{ label: 'Standard', price: 13.0 }] },
-    { id: 'coffee_latte', name: 'Latte', image: '', tagline: 'Coffee with milk', taglinePl: 'Kawa z mlekiem', sizes: [{ label: 'Standard', price: 15.0 }] },
-    { id: 'coffee_cappuccino', name: 'Cappuccino', image: '', tagline: 'Coffee with frothy milk', taglinePl: 'Kawa ze spienionym mlekiem', sizes: [{ label: 'Standard', price: 15.0 }] },
-    { id: 'coffee_flatwhite', name: 'Flat white', image: '', tagline: 'Strong coffee with milk', taglinePl: 'Mocna kawa z mlekiem', sizes: [{ label: 'Standard', price: 15.0 }] },
+    { id: 'combo_1', name: 'Combo: Fettuccine Pancakes', namePl: 'Zestaw: Naleśniki Fettuccine', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/combo.jpg', tagline: 'Choice of fresh juice (orange/apple) or lemonade + fettuccine pancakes — choice of toppings', taglinePl: 'Wybór świeżego soku (pomarańcza/jabłko) lub lemoniady + naleśniki fettuccine — wybór dodatków', sizes: [{ label: '400ml + 250gr', price: 35.0 }] },
   ]
 };
 
@@ -307,7 +290,7 @@ function getModifiersFor(categoryId, itemId) {
   }
   if (categoryId === 'cocktails') return MODIFIERS_BY_CATEGORY.cocktails;
   if (categoryId === 'protein_shakes') return MODIFIERS_BY_CATEGORY.protein;
-  if (categoryId === 'drinks' || categoryId === 'lebanese_speciality') return MODIFIERS_BY_CATEGORY.juice_drink;
+  if (categoryId === 'lebanese_speciality') return MODIFIERS_BY_CATEGORY.juice_drink;
   if (categoryId === 'juices' || categoryId === 'mixed_juices') return MODIFIERS_BY_CATEGORY.juice_only;
   if (categoryId === 'savory_crepes') return MODIFIERS_BY_CATEGORY.savory;
   if (['waffles', 'sweet_crepes'].includes(categoryId)) return MODIFIERS_BY_CATEGORY.sweet;
@@ -445,13 +428,13 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
       } else { return { ...prev, [groupKey]: [option] }; } 
     }); 
   } 
-  function handleAdd() { if (!isValid) return; onAdd({ lineId: uid(), itemId: item.id, name: item.name, categoryId: category.id, sizeLabel: size.label, unitPrice: size.price, mods, qty }); } 
+  function handleAdd() { if (!isValid) return; onAdd({ lineId: uid(), itemId: item.id, name: item.name, namePl: item.namePl, categoryId: category.id, sizeLabel: size.label, unitPrice: size.price, mods, qty }); } 
   
   return ( 
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm"> 
       <div className="absolute inset-0" onClick={onClose} /> 
       <div className="relative w-full md:max-w-lg md:mx-4 bg-white md:rounded-3xl rounded-t-3xl max-h-[92vh] flex flex-col anim-slide overflow-hidden"> 
-        {category.id !== 'combo' && category.id !== 'drinks' ? (
+        {category.id !== 'combo' ? (
           <div className="relative w-full h-48 md:h-56 bg-gray-100 shrink-0">
             <img src={item.image || `https://placehold.co/600x400/FBF9F2/7a964a?text=${encodeURIComponent(item.name)}`} alt={item.name} className="w-full h-full object-cover" />
             <button onClick={onClose} className={`absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center bg-white/80 backdrop-blur text-gray-800 hover:bg-white transition shadow-sm`}><X size={16} /></button> 
@@ -462,7 +445,7 @@ function ItemModal({ item, category, onClose, onAdd, lang }) {
           </div>
         )}
         <div className="px-6 pt-5 pb-2 shrink-0"> 
-          <h2 className="font-display font-semibold text-2xl mb-1">{item.name}</h2> 
+          <h2 className="font-display font-semibold text-2xl mb-1">{lang === 'PL' && item.namePl ? item.namePl : item.name}</h2> 
           <p className="text-sm text-gray-500 mb-2">{lang === 'PL' && item.taglinePl ? item.taglinePl : item.tagline}</p> 
           {item.allergens && (
              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider rounded-md">
@@ -534,7 +517,7 @@ function CartDrawer({ open, cart, onClose, onRemove, onUpdateQty, onCheckout, la
             <div key={line.lineId} className="rounded-xl p-3 border border-gray-200 bg-white"> 
               <div className="flex justify-between items-start mb-1.5"> 
                 <div className="min-w-0 flex-1 pr-2"> 
-                  <div className="font-semibold text-sm truncate">{line.name}</div> 
+                  <div className="font-semibold text-sm truncate">{lang === 'PL' && line.namePl ? line.namePl : line.name}</div> 
                   <div className="text-xs mt-0.5 text-gray-400">{line.sizeLabel}{Object.values(line.mods || {}).flat().map(m => ` • ${lang === 'PL' && m.namePl ? m.namePl : m.name}`).join('')}</div> 
                 </div> 
                 <button onClick={() => onRemove(line.lineId)} className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-red-400 hover:bg-red-50"><X size={14} /></button> 
@@ -616,7 +599,7 @@ function CheckoutModal({ cart, onClose, onPlaced, lang, onAddUpsell, serverTime 
                          <img src={MENU_ITEMS.ashta[0].image || `https://placehold.co/100x100/FBF9F2/7a964a?text=Annaya`} alt="Annaya" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                       </div>
                       <div className="flex-1">
-                         <div className="text-sm font-bold text-[#16261B]">Annaya</div>
+                         <div className="text-sm font-bold text-[#16261B]">{lang === 'PL' ? MENU_ITEMS.ashta[0].namePl : MENU_ITEMS.ashta[0].name}</div>
                          <div className="text-xs font-semibold text-[#7a964a]">+ {currency(MENU_ITEMS.ashta[0].sizes[0].price)}</div>
                       </div>
                       <div className="w-6 h-6 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#93b45b] shrink-0 mr-1"><Plus size={14}/></div>
@@ -628,7 +611,7 @@ function CheckoutModal({ cart, onClose, onPlaced, lang, onAddUpsell, serverTime 
                          <img src={MENU_ITEMS.ashta[3].image || `https://placehold.co/100x100/FBF9F2/7a964a?text=Katayef`} alt="Katayef" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                       </div>
                       <div className="flex-1">
-                         <div className="text-sm font-bold text-[#16261B]">Katayef</div>
+                         <div className="text-sm font-bold text-[#16261B]">{lang === 'PL' ? MENU_ITEMS.ashta[3].namePl : MENU_ITEMS.ashta[3].name}</div>
                          <div className="text-xs font-semibold text-[#7a964a]">+ {currency(MENU_ITEMS.ashta[3].sizes[0].price)}</div>
                       </div>
                       <div className="w-6 h-6 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#93b45b] shrink-0 mr-1"><Plus size={14}/></div>
@@ -722,7 +705,7 @@ function TrackOrderModal({ onClose, lang }) {
                       </div>
                       <div className="space-y-2 mb-4">
                         {order.items.map((item, idx) => (
-                          <div key={idx} className="text-sm"><div className="font-semibold text-gray-800 flex items-start gap-1.5"><span className="text-gray-500">{item.qty}x</span> {item.name}</div><div className="text-xs text-gray-500 ml-5 mt-0.5">{item.sizeLabel}{item.mods && Object.values(item.mods).flat().map(m => ` · ${lang === 'PL' && m.namePl ? m.namePl : m.name}`).join('')}</div></div>
+                          <div key={idx} className="text-sm"><div className="font-semibold text-gray-800 flex items-start gap-1.5"><span className="text-gray-500">{item.qty}x</span> {lang === 'PL' && item.namePl ? item.namePl : item.name}</div><div className="text-xs text-gray-500 ml-5 mt-0.5">{item.sizeLabel}{item.mods && Object.values(item.mods).flat().map(m => ` · ${lang === 'PL' && m.namePl ? m.namePl : m.name}`).join('')}</div></div>
                         ))}
                       </div>
                       <div className="text-xs font-bold flex items-center gap-1 pt-3 border-t border-black/5 text-[#7a964a]"><Clock size={12} /> Pickup: {new Date(order.pickup_time).toLocaleTimeString('en-US', { timeZone: 'Europe/Warsaw', hour: '2-digit', minute:'2-digit', hour12: false })}</div>
@@ -737,8 +720,8 @@ function TrackOrderModal({ onClose, lang }) {
 }
 
 const PROMO_LIST = [
-  { id: 'lody-artisan', name: 'Natural Icecream', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious artisanal ice cream', taglinePl: 'Pyszne lody naturalne', sizes: [{ label: '80g', price: 10.0 }], categoryId: 'ice_cream', icon: '🍨' },
-  { id: 'annaya', name: 'ANNAYA', image: '', tagline: 'ashta (lebanese cheese), mix fruits, honey, mix nuts', taglinePl: 'aszta, mix owoców, miód, mix orzechów', sizes: [{ label: '~350gr', price: 30.0 }], categoryId: 'ashta', icon: '🍮' }
+  { id: 'lody-artisan', name: 'Natural Icecream', namePl: 'Lody Naturalne', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious artisanal ice cream', taglinePl: 'Pyszne lody naturalne', sizes: [{ label: '80g', price: 10.0 }], categoryId: 'ice_cream', icon: '🍨' },
+  { id: 'annaya', name: 'ANNAYA', namePl: 'ANNAYA', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/ANNAYA.jpg', tagline: 'ashta (lebanese cheese), mix fruits, honey, mix nuts', taglinePl: 'aszta, mix owoców, miód, mix orzechów', sizes: [{ label: '350g', price: 30.0 }], categoryId: 'ashta', icon: '🍮' }
 ];
 
 function WelcomePromoModal({ onClose, onAdd, lang }) {
@@ -752,7 +735,7 @@ function WelcomePromoModal({ onClose, onAdd, lang }) {
         </div>
         <div className="p-8 pt-6">
           <h2 className="font-display text-2xl font-bold mb-1">{T[lang].promoTitle}</h2><p className="text-gray-500 text-sm mb-6">{T[lang].promoSub}</p>
-          <div className="bg-gray-50 p-4 rounded-2xl mb-6 border border-gray-100"><h3 className="font-bold text-lg flex items-center justify-center gap-2">{item.icon} {item.name}</h3><div className="mt-2 font-display text-xl font-bold text-[#7a964a]">{item.sizes[0].price.toFixed(2)} PLN</div></div>
+          <div className="bg-gray-50 p-4 rounded-2xl mb-6 border border-gray-100"><h3 className="font-bold text-lg flex items-center justify-center gap-2">{item.icon} {lang === 'PL' ? item.namePl : item.name}</h3><div className="mt-2 font-display text-xl font-bold text-[#7a964a]">{item.sizes[0].price.toFixed(2)} PLN</div></div>
           <Button size="lg" className="w-full" onClick={() => { onAdd(item); onClose(); }}><Plus size={18} /> {T[lang].add}</Button>
         </div>
       </div>
@@ -851,7 +834,7 @@ export default function CustomerPage() {
       if (group.required && !group.multi && group.default) { initMods[key] = [group.options.find(o => o.id === group.default)]; }
       else if (group.required && group.options.length > 0) { initMods[key] = [group.options[0]]; } 
     });
-    addToCart({ lineId: uid(), itemId: item.id, name: item.name, categoryId, sizeLabel: item.sizes[0].label, unitPrice: item.sizes[0].price, mods: initMods, qty: 1 });
+    addToCart({ lineId: uid(), itemId: item.id, name: item.name, namePl: item.namePl, categoryId, sizeLabel: item.sizes[0].label, unitPrice: item.sizes[0].price, mods: initMods, qty: 1 });
   }
   function removeFromCart(lineId) { setCart((c) => c.filter((l) => l.lineId !== lineId)); }
   function updateQty(lineId, qty) { if (qty < 1) return removeFromCart(lineId); setCart((c) => c.map((l) => (l.lineId === lineId ? { ...l, qty } : l))); }
@@ -931,14 +914,14 @@ export default function CustomerPage() {
                       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         {items.map(it => (
                           <button key={it.id} onClick={() => setOpenItem({ item: it, category: c })} className="bg-white rounded-3xl border border-gray-100 text-left hover:shadow-xl transition-all group relative overflow-hidden text-[#16261B] flex flex-col h-full">
-                            {c.id !== 'combo' && c.id !== 'drinks' && c.id !== 'lebanese_speciality' && (
+                            {c.id !== 'lebanese_speciality' && (
                               <div className="w-full h-48 bg-gray-100 relative overflow-hidden shrink-0">
                                 <img src={it.image || `https://placehold.co/600x400/FBF9F2/7a964a?text=${encodeURIComponent(it.name)}`} alt={it.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                 {it.popular && <div className="absolute top-3 right-3"><Badge tone="gold">Popular</Badge></div>}
                               </div>
                             )}
                             <div className="p-5 flex flex-col flex-1 w-full">
-                              <h3 className="font-display font-bold text-xl mb-1">{it.name}</h3>
+                              <h3 className="font-display font-bold text-xl mb-1">{lang === 'PL' && it.namePl ? it.namePl : it.name}</h3>
                               <p className="text-xs text-gray-500 line-clamp-2 mb-4 flex-1">{lang === 'PL' && it.taglinePl ? it.taglinePl : it.tagline}</p>
                               <div className="flex justify-between items-center w-full pt-3 border-t border-gray-50 mt-auto"><span className="font-bold text-lg text-[#7a964a]">{currency(it.sizes[0].price)}</span><span className="w-10 h-10 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#93b45b] group-hover:bg-[#93b45b] group-hover:text-white transition"><Plus size={20}/></span></div>
                             </div>
