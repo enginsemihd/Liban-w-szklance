@@ -163,6 +163,7 @@ const MENU_ITEMS = {
     { id: 'waffle_3', name: 'Strawberry jam (~250gr)', namePl: 'Dżem truskawkowy (~250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20dzem%20truskawky.jpg', tagline: 'whipped cream, strawberry sauce', sizes: [{ label: 'Standard', price: 23.0 }] },
     { id: 'waffle_5', name: 'Nutella, banana (~250gr)', namePl: 'Nutella, banan (~250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20nutella.jpg', tagline: 'whipped cream', sizes: [{ label: 'Standard', price: 25.0 }] },
     { id: 'waffle_6', name: 'Powdered sugar (~250gr)', namePl: 'Cukier puder (~250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20cuker.jpg', tagline: 'Classic waffle', sizes: [{ label: 'Standard', price: 13.0 }] },
+    { id: 'ashta_waffle', name: 'Ashta Waffle (~250gr)', namePl: 'Aszta Waffle (~250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'mix fruits, honey, mix nuts', sizes: [{ label: 'Standard', price: 28.0 }] }
   ],
   sweet_crepes: [
     { id: 'sc_1', name: 'Nutella, banana, hazelnuts (~350gr)', namePl: 'Nutella, banan, orzechy laskowe (~350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20nutella%20banana.jpg', tagline: 'chocolate syrup, whipped cream, berries', sizes: [{ label: 'Standard', price: 27.0 }] },
@@ -178,8 +179,7 @@ const MENU_ITEMS = {
     { id: 'sc_11', name: 'Cottage cheese, strawberry jam (~350gr)', namePl: 'Twarożek ze śmietaną, dżem truskawkowy (~350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/logo.jpeg', tagline: 'strawberry syrup, strawberries', sizes: [{ label: 'Standard', price: 26.0 }] },
     { id: 'sc_12', name: 'Cottage cheese, raspberry jam (~350gr)', namePl: 'Twarożek ze śmietaną, dżem malinowy (~350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/logo.jpeg', tagline: 'raspberry syrup, raspberries', sizes: [{ label: 'Standard', price: 26.0 }] },
     { id: 'sc_13', name: 'Apple mousse (~350gr)', namePl: 'Mus jabłkowy (~350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20mus%20jalbkowy.jpg', tagline: '12% cream, cinnamon, apple', sizes: [{ label: 'Standard', price: 27.0 }] },
-    { id: 'ashta_waffle', name: 'Ashta Waffle (~250gr)', namePl: 'Aszta Waffle (~250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'mix fruits, honey, mix nuts', sizes: [{ label: 'Standard', price: 28.0 }] }
-  ],
+    ],
   savory_crepes: [
     { id: 'sav_1', name: 'Labneh (~350gr)', namePl: 'Labneh (libański serek) (~350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/labneh.jpg', tagline: 'olive oil, zaatar, olives, cherry tomatoes, cucumber, arugula', sizes: [{ label: 'Standard', price: 28.0 }] },
     { id: 'sav_2', name: 'Cheese, ham (~350gr)', namePl: 'Ser żółty, szynka (~350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20ser%20zolty.jpg', tagline: 'mushroom, oregano, cherry tomatoes, cucumber, arugula', sizes: [{ label: 'Standard', price: 28.0 }] },
@@ -190,7 +190,7 @@ const MENU_ITEMS = {
     { id: 'lody-dog', name: 'Ice Cream for Dogs', namePl: 'Lody dla psów', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/icecreamfordogs.png', tagline: 'Special dog-friendly ice cream', taglinePl: 'Specjalne lody dla psów', sizes: [{ label: '1 Cup', price: 14.0 }] },
   ],
   ashta: [
-    { id: 'ashta-fruits', name: 'Ashta & Fruits', namePl: 'Aszta i Owoce', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/aszta.jpeg', tagline: 'Authentic Lebanese ashta cream served with fruits', sizes: [{ label: '0.5 kg', price: 70.0 }, { label: '1 kg', price: 125.0 }] },
+    { id: 'ashta-fruits', name: 'Ashta & Fruits (~500gr, 1kg)', namePl: 'Aszta i Owoce (~500gr, 1kg)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/aszta.jpeg', tagline: 'Authentic Lebanese ashta cream served with fruits', sizes: [{ label: '0.5 kg', price: 70.0 }, { label: '1 kg', price: 125.0 }] },
     
   ],
   annaya_cat: [
@@ -891,8 +891,7 @@ export default function CustomerPage() {
                <button onClick={() => scrollToSection('contact')} className="opacity-80 hover:opacity-100 transition">{T[lang].navContact}</button>
             </nav>
             <div className="flex items-center gap-3 ml-auto">
-              <button onClick={() => setTrackOpen(true)} className="hidden sm:flex relative items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border border-white/30 hover:bg-white/20 transition"><Search size={16} /> {T[lang].trackOrder}</button>
-              <button onClick={() => setCartOpen(true)} className="bg-[#93b45b] text-white px-4 py-2 rounded-full flex items-center gap-2 font-bold text-sm hover:opacity-90 transition shadow-lg"><ShoppingBag size={18}/> {cart.length > 0 && <span className="bg-white text-[#7a964a] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold">{cart.length}</span>}</button>
+          <button onClick={() => setTrackOpen(true)} className="flex relative items-center gap-2 p-2 sm:px-3 sm:py-2 rounded-full text-sm font-medium border border-white/30 hover:bg-white/20 transition"><Search size={18} /> <span className="hidden sm:block">{T[lang].trackOrder}</span></button>              <button onClick={() => setCartOpen(true)} className="bg-[#93b45b] text-white px-4 py-2 rounded-full flex items-center gap-2 font-bold text-sm hover:opacity-90 transition shadow-lg"><ShoppingBag size={18}/> {cart.length > 0 && <span className="bg-white text-[#7a964a] w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold">{cart.length}</span>}</button>
             </div>
           </div>
         </header>
