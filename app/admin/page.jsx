@@ -124,10 +124,10 @@ export default function AdminPage() {
                 <h1 className="text-2xl font-bold" style={{ color: BRAND.ink }}>Owner Panel</h1>
               </div>
               <form onSubmit={handleLogin} className="space-y-4">
-                <div><label className="block text-xs uppercase font-semibold text-gray-500 mb-1">Email Address</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500" required /></div>
+                <div><label className="block text-xs uppercase font-semibold text-gray-500 mb-1">Email Address</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500 text-gray-900 font-medium" required /></div>
                 <div>
                   <div className="flex justify-between items-baseline mb-1"><label className="block text-xs uppercase font-semibold text-gray-500">Password</label><button type="button" onClick={() => { setView('forgot_password'); setError(''); }} className="text-xs font-semibold hover:underline" style={{ color: BRAND.green }}>Forgot Password?</button></div>
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500" required />
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500 text-gray-900 font-medium" required />
                 </div>
                 {error && <div className="text-red-500 text-sm font-semibold text-center bg-red-50 p-2 rounded-lg">{error}</div>}
                 <button type="submit" className="w-full text-white font-semibold py-3 rounded-xl active:scale-95 transition" style={{ backgroundColor: BRAND.green }}>Login</button>
