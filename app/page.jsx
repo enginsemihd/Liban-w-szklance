@@ -86,8 +86,8 @@ const T = {
     address: 'Adres', openingHours: 'Godziny Otwarcia', followUs: 'Śledź Nas',
     allergens: 'Alergeny',
     aboutP1: 'Liban w Szklance to tak naprawdę nasz list miłosny do libańskiej kultury, jej tętniących życiem smaków i gościnności, dzięki której od razu czujesz się jak w domu. Wychowaliśmy się w otoczeniu rodzinnych tradycji i niepowtarzalnego smaku domowych koktajli, dlatego postanowiliśmy stworzyć przytulne, nowoczesne miejsce, by móc się tym z Wami podzielić.',
-    aboutP2: 'We wszystkim, co robimy, kierujemy się jedną prostą zasadą: jakość ma znaczenie. Starannie dobieramy składniki i przygotowujemy każdy koktajl z exuberant dbałością, by naturalne smaki i świeżość grały pierwsze skrzypce. Nie idziemy na skróty — to po prostu szczere, pielęgnowane od lat przepisy prosto z naszych libańskich korzeni.',
-    aboutP3: 'Zawsze wierzyliśmy, że Liban w Szklance to nie tylko zwykły lokal. Chcemy, aby przekroczenie naszych progów przypominało wizytę w domu dobrego przyjaciela. Każdą szklankę przygotowujemy z sercem, a każdego, kto nas odwiedza, witamy jak wyjątkowego gościa. Niezależnie od tego, czy wpadasz na szybkie orzeźwienie, czy próbujesz naszych smaków po raz ilk, mamy nadzieję, że poprawimy Ci dzień.',
+    aboutP2: 'We wszystkim, co robimy, kierujemy się jedną prostą zasadą: jakość ma znaczenie. Starannie dobieramy składniki i przygotowujemy każdy koktajl z dbałością, by naturalne smaki i świeżość grały pierwsze skrzypce. Nie idziemy na skróty — to po prostu szczere, pielęgnowane od lat przepisy prosto z naszych libańskich korzeni.',
+    aboutP3: 'Zawsze wierzyliśmy, że Liban w Szklance to nie tylko zwykły lokal. Chcemy, aby przekroczenie naszych progów przypominało wizytę w domu dobrego przyjaciela. Każdą szklankę przygotowujemy z sercem, a każdego, kto nas odwiedza, witamy jak wyjątkowego gościa. Niezależnie od tego, czy wpadasz na szybkie orzeźwienie, czy próbujesz naszych smaków po raz pierwszy, mamy nadzieję, że poprawimy Ci dzień.',
     aboutP4: 'Jesteśmy niesamowicie dumni z naszego dziedzictwa, w którym łączymy dawne tradycje z odrobiną nowoczesności. Nasz cel jest w sumie bardzo prosty: chcemy podać Ci kawałek Libanu, pełen świeżości i jakości, prosto w szklance.',
     q1: '„Liban to ojczyzna, którą Bóg wybrał dla Siebie".', q2: '„Ty masz swój Liban, a ja mam swój".', q3: '„Mój Liban to mały naród, ale wielki naród. Mój Liban to splot aromatów, skupisko wspomnień i symfonia marzeń".'
   }
@@ -163,6 +163,7 @@ const MENU_ITEMS = {
     { id: 'waffle_3', name: 'Strawberry jam (250gr)', namePl: 'Dżem truskawkowy (250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20dzem%20truskawky.jpg', tagline: 'whipped cream, strawberry sauce', taglinePl: 'bita śmietana, sos truskawkowy', sizes: [{ label: 'Standard', price: 23.0 }] },
     { id: 'waffle_5', name: 'Nutella, banana (250gr)', namePl: 'Nutella, banan (250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/Gofry%20nutella.jpg', tagline: 'whipped cream', taglinePl: 'bita śmietana', sizes: [{ label: 'Standard', price: 25.0 }] },
     { id: 'waffle_6', name: 'Powdered sugar (250gr)', namePl: 'Cukier puder (250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/gofry%20cuker.jpg', tagline: 'Classic waffle', taglinePl: 'Klasyczny gofr z cukrem pudrem', sizes: [{ label: 'Standard', price: 13.0 }] },
+    { id: 'ashta_waffle', name: 'Ashta Waffle (~250gr)', namePl: 'Aszta Waffle (~250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'mix fruits, honey, mix nuts', taglinePl: 'mix owoców, miód, mix orzechów', sizes: [{ label: 'Standard', price: 28.0 }] }
   ],
   sweet_crepes: [
     { id: 'sc_1', name: 'Nutella, banana, hazelnuts (350gr)', namePl: 'Nutella, banan, orzechy laskowe (350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/crepe%20nutella%20banana.jpg', tagline: 'chocolate syrup, whipped cream, berries', taglinePl: 'syrop czekoladowy, bita śmietana, owoce leśne', sizes: [{ label: 'Standard', price: 27.0 }] },
@@ -186,11 +187,15 @@ const MENU_ITEMS = {
   ],
   ice_cream: [
     { id: 'lody-artisan', name: 'Natural Icecream (per scoop)', namePl: 'Lody Naturalne (za gałkę)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Select scoops below using the (+) button', taglinePl: 'Wybierz ilość gałek przyciskiem (+) poniżej', sizes: [{ label: '1 scoop', price: 10.0 }] },
+    
+    // GÜVENLİK İÇİN 0.5 KG VE 1 KG AYRILDI
+    { id: 'lody_box_05', name: 'Natural Icecream (0.5 kg)', namePl: 'Lody Naturalne (0.5 kg)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Family size ice cream (0.5 kg)', taglinePl: 'Rodzinne opakowanie lodów (0.5 kg)', sizes: [{ label: 'Standard', price: 60.0 }] },
+    { id: 'lody_box_1', name: 'Natural Icecream (1 kg)', namePl: 'Lody Naturalne (1 kg)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Family size ice cream (1 kg)', taglinePl: 'Rodzinne opakowanie lodów (1 kg)', sizes: [{ label: 'Standard', price: 120.0 }] },
+    
     { id: 'lody-dog', name: 'Ice Cream for Dogs', namePl: 'Lody dla psów', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/icecreamfordogs.png', tagline: 'Special dog-friendly ice cream', taglinePl: 'Specjalne lody dla psów', sizes: [{ label: '1 Cup', price: 14.0 }] },
   ],
   ashta: [
-    { id: 'ashta-fruits', name: 'Ashta & Fruits (0.5kg/1kg)', namePl: 'Aszta i Owoce (0.5kg/1kg)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/aszta.jpeg', tagline: 'Authentic Lebanese ashta cream served with fruits', taglinePl: 'Autentyczny libański krem aszta serwowany z owocami', sizes: [{ label: '0.5 kg', price: 70.0 }, { label: '1 kg', price: 125.0 }] },
-    { id: 'ashta_waffle', name: 'Ashta Waffle (250gr)', namePl: 'Aszta Waffle (250gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/plat%20ashta.jpg', tagline: 'mix fruits, honey, mix nuts', taglinePl: 'mix owoców, miód, mix orzechów', sizes: [{ label: 'Standard', price: 28.0 }] }
+    { id: 'ashta-fruits', name: 'Ashta & Fruits (0.5kg/1kg)', namePl: 'Aszta i Owoce (0.5kg/1kg)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/aszta.jpeg', tagline: 'Authentic Lebanese ashta cream served with fruits', taglinePl: 'Autentyczny libański krem aszta serwowany z owocami', sizes: [{ label: '0.5 kg', price: 70.0 }, { label: '1 kg', price: 125.0 }] }
   ],
   annaya_cat: [
     { id: 'annaya', name: 'ANNAYA (350gr)', namePl: 'ANNAYA (350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/ANNAYA.jpg', tagline: 'ashta, mix fruits, honey, mix nuts', taglinePl: 'aszta, mix owoców, miód, mix orzechów', sizes: [{ label: 'Standard', price: 30.0 }] },
@@ -231,6 +236,10 @@ const EXTRAS_OPTIONS = [
 
 const BAG_OPTIONS = [ { id: 'bag_paper', name: 'Paper Bag', namePl: 'Torba papierowa', price: 0.5 } ];
 const BOX_150 = { name: 'Packaging', namePl: 'Opakowanie', required: true, multi: false, options: [{ id: 'box_150', name: 'Eco Box', namePl: 'Eko Pudełko', price: 1.5 }] };
+
+// HER BOYUTA ÖZEL ZORUNLU PAKETLEME 
+const ICE_PKG_05 = { name: 'Recycle Package', namePl: 'Opakowanie recyklingowe', required: true, multi: false, options: [{ id: 'pkg_ice_05', name: '0.5 kg box', namePl: 'Pudełko 0.5 kg', price: 7.0 }], default: 'pkg_ice_05' };
+const ICE_PKG_1 = { name: 'Recycle Package', namePl: 'Opakowanie recyklingowe', required: true, multi: false, options: [{ id: 'pkg_ice_1', name: '1 kg box', namePl: 'Pudełko 1 kg', price: 10.0 }], default: 'pkg_ice_1' };
 
 const MILK_OPTIONS = { name: 'Milk Base', namePl: 'Baza Mleczna', required: true, multi: false, options: [
   { id: 'normal', name: 'Regular Milk', namePl: 'Zwykłe Mleko', price: 0 }, 
@@ -294,6 +303,14 @@ function getModifiersFor(categoryId, itemId) {
       bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS }
     };
   }
+  // MÜKEMMEL EŞLEŞTİRME BURADA YAPILDI:
+  if (itemId === 'lody_box_05') {
+    return { packaging: ICE_PKG_05, bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS } };
+  }
+  if (itemId === 'lody_box_1') {
+    return { packaging: ICE_PKG_1, bag: { name: 'Takeaway Bag', namePl: 'Torba na wynos', required: false, multi: false, options: BAG_OPTIONS } };
+  }
+
   if (categoryId === 'cocktails') return MODIFIERS_BY_CATEGORY.cocktails;
   if (categoryId === 'protein_shakes') return MODIFIERS_BY_CATEGORY.protein;
   if (categoryId === 'lebanese_speciality') return MODIFIERS_BY_CATEGORY.juice_drink;
@@ -727,7 +744,7 @@ function TrackOrderModal({ onClose, lang }) {
 
 const PROMO_LIST = [
   { id: 'lody-artisan', name: 'Natural Icecream (per scoop)', namePl: 'Lody Naturalne (za gałkę)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/iceream.jpeg', tagline: 'Delicious ice cream', taglinePl: 'Pyszne lody', sizes: [{ label: '1 scoop', price: 10.0 }], categoryId: 'ice_cream', icon: '🍨' },
-  { id: 'annaya', name: 'ANNAYA (350gr)', namePl: 'ANNAYA (350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/ANNAYA.jpg', tagline: 'ashta, mix fruits, honey, mix nuts', taglinePl: 'aszta, mix owoców, miód, mix orzechów', sizes: [{ label: 'Standard', price: 30.0 }], categoryId: 'annaya_cat', icon: '`🍮`' }
+  { id: 'annaya', name: 'ANNAYA (350gr)', namePl: 'ANNAYA (350gr)', image: 'https://wixiouwhfthwahlqwatb.supabase.co/storage/v1/object/public/menu%20images/ANNAYA.jpg', tagline: 'ashta, mix fruits, honey, mix nuts', taglinePl: 'aszta, mix owoców, miód, mix orzechów', sizes: [{ label: 'Standard', price: 30.0 }], categoryId: 'annaya_cat', icon: '🍮' }
 ];
 
 function WelcomePromoModal({ onClose, onAdd, lang }) {
@@ -969,7 +986,7 @@ export default function CustomerPage() {
                        </p>
                      </div>
                    </div>
-                   <div className="flex items-start gap-4"><div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><Mail size={24} /></div><div><h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">Contact</h4><p className="font-semibold text-[#16261B]">+48 530022999<br/>libanwszklance@gmail.com</p></div></div>
+                   <div className="flex items-start gap-4"><div className="w-12 h-12 rounded-full bg-[#93b45b]/10 flex items-center justify-center text-[#7a964a] shrink-0"><Mail size={24} /></div><div><h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-1">Contact</h4><p className="font-semibold text-[#16261B]">+48 530022999<br/>libanwszklance@libanwszklance.pl</p></div></div>
                    <div className="pt-4 border-t border-gray-100 flex items-center gap-4"><span className="font-bold text-gray-400 uppercase text-xs tracking-widest">{T[lang].followUs}</span><a href="https://www.instagram.com/libanwszklance/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#E4405F] hover:text-white transition shadow-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a><a href="https://www.facebook.com/profile.php?id=61585610253402" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#1877F2] hover:text-white transition shadow-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a></div>
                 </div>
                 <div className="bg-gray-200 rounded-[2rem] overflow-hidden min-h-[350px] shadow-inner border border-gray-100 relative"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2444.970868846337!2d21.03120957605999!3d52.20676775928825!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x452ff6e45d153ed%3A0x592b3c677a0f1893!2sLiban%20w%20szklance!5e0!3m2!1sen!2str!4v1713180000000!5m2!1sen!2str" width="100%" height="100%" style={{border:0, position:'absolute', top:0, left:0}} allowFullScreen="" loading="lazy"></iframe></div>
