@@ -21,17 +21,26 @@ export default function AdminPage() {
   const [resetEmail, setResetEmail] = useState('');
   const [resetSent, setResetSent] = useState(false); 
 
-  // 1. SESSION CHECK
+  // 1. SESSION CHECK & SECURITY GUARD
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+      // Check if session exists AND it's a real email-based admin login (not anonymous customer)
+      if (session && session.user && session.user.email) {
+          setSession(session);
+          refreshData();
+      } else {
+          setSession(null);
+      }
       setLoading(false);
-      if (session) refreshData();
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) refreshData();
+      if (session && session.user && session.user.email) {
+          setSession(session);
+          refreshData();
+      } else {
+          setSession(null);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -54,79 +63,94 @@ export default function AdminPage() {
     }
   }, [session]);
 
-  // REFRESH DATA (Orders + Stats)
   async function refreshData() {
     await fetchOrders();
     await fetchStats();
   }
 
-  // FETCH ORDERS (Last 3 days / Performance Protection)
   async function fetchOrders() {
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-    const { data, error } = await supabase
+    const { data, err } = await supabase
       .from('orders')
       .select('*')
       .gte('created_at', threeDaysAgo.toISOString())
       .order('created_at', { ascending: false })
       .limit(300);
       
-    if (!error && data) setOrders(data);
+    if (!err && data) setOrders(data);
   }
 
-  // FETCH STATS (Calls RPC Function from SQL)
   async function fetchStats() {
-    const { data, error } = await supabase.rpc('get_admin_dashboard_stats');
-    if (!error && data) setStats(data);
+    const { data, err } = await supabase.rpc('get_admin_dashboard_stats');
+    if (!err && data) setStats(data);
   }
 
-  // UPDATE STATUS (Triggered by buttons)
   async function updateOrderStatus(id, newStatus) {
-    const { error } = await supabase
+    const { error: updateError } = await supabase
       .from('orders')
       .update({ status: newStatus })
       .eq('id', id);
 
-    if (!error) {
+    if (!updateError) {
       await refreshData();
     } else {
-      console.error("Update Error:", error);
-      alert("Error: " + error.message + "\nPlease check if the email in the RLS policy matches your login email.");
+      alert("Error: " + updateError.message);
     }
   }
 
   const handleLogin = async (e) => {
-    e.preventDefault(); setError('');
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message);
+    e.preventDefault(); 
+    setError('');
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) setError(signInError.message);
   };
 
-  const handleLogout = async () => await supabase.auth.signOut();
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setSession(null); 
+  };
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (!resetEmail.includes('@')) { setError('Invalid email address.'); return; }
-    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, { redirectTo: `${window.location.origin}/admin` });
-    if (error) setError(error.message); else setResetSent(true); 
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(resetEmail, { redirectTo: `${window.location.origin}/admin` });
+    if (resetError) setError(resetError.message); 
+    else setResetSent(true); 
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading Secure Environment...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Loading Secure Environment...
+      </div>
+    );
+  }
 
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: BRAND.bg }}>
         <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm border relative overflow-hidden" style={{ borderColor: BRAND.line }}>
+          
           {view === 'login' && (
             <div className="anim-fadeup">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#eefbf1', color: BRAND.green }}><span className="text-2xl">🔒</span></div>
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#eefbf1', color: BRAND.green }}>
+                  <ShieldCheck size={32} />
+                </div>
                 <h1 className="text-2xl font-bold" style={{ color: BRAND.ink }}>Owner Panel</h1>
               </div>
               <form onSubmit={handleLogin} className="space-y-4">
-                <div><label className="block text-xs uppercase font-semibold text-gray-500 mb-1">Email Address</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500 text-gray-900 font-medium" required /></div>
                 <div>
-                  <div className="flex justify-between items-baseline mb-1"><label className="block text-xs uppercase font-semibold text-gray-500">Password</label><button type="button" onClick={() => { setView('forgot_password'); setError(''); }} className="text-xs font-semibold hover:underline" style={{ color: BRAND.green }}>Forgot Password?</button></div>
+                  <label className="block text-xs uppercase font-semibold text-gray-500 mb-1">Email Address</label>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500 text-gray-900 font-medium" required />
+                </div>
+                <div>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <label className="block text-xs uppercase font-semibold text-gray-500">Password</label>
+                    <button type="button" onClick={() => { setView('forgot_password'); setError(''); }} className="text-xs font-semibold hover:underline" style={{ color: BRAND.green }}>Forgot Password?</button>
+                  </div>
                   <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-500 text-gray-900 font-medium" required />
                 </div>
                 {error && <div className="text-red-500 text-sm font-semibold text-center bg-red-50 p-2 rounded-lg">{error}</div>}
@@ -134,27 +158,36 @@ export default function AdminPage() {
               </form>
             </div>
           )}
+
           {view === 'forgot_password' && (
-             <div className="anim-fadeup">
-               <button onClick={() => { setView('login'); setResetSent(false); setError(''); }} className="absolute top-6 left-6 text-gray-400 hover:text-gray-800"><ArrowLeft size={20} /></button>
-               <div className="text-center mb-6 mt-4">
-                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-green-50"><Mail size={28} className="text-green-600"/></div>
-                 <h1 className="text-2xl font-bold">Reset Password</h1>
-               </div>
-               {!resetSent ? (
-                 <form onSubmit={handleResetPassword} className="space-y-4">
-                   <div><label className="block text-xs uppercase font-semibold text-gray-500 mb-1">Email Address</label><input type="email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} className="w-full border p-3 rounded-xl outline-none" required/></div>
-                   {error && <div className="text-red-500 text-sm bg-red-50 p-2 rounded-lg text-center">{error}</div>}
-                   <button type="submit" className="w-full text-white font-semibold py-3 rounded-xl active:scale-95 transition" style={{ backgroundColor: BRAND.green }}>Send Link</button>
-                 </form>
-               ) : (
-                 <div className="text-center bg-green-50 p-4 rounded-xl border border-green-200">
-                   <ShieldCheck size={32} className="text-green-600 mx-auto mb-2" />
-                   <h3 className="font-bold text-green-800">Check Your Inbox</h3>
-                 </div>
-               )}
-             </div>
+            <div className="anim-fadeup">
+              <button onClick={() => { setView('login'); setResetSent(false); setError(''); }} className="absolute top-6 left-6 text-gray-400 hover:text-gray-800">
+                <ArrowLeft size={20} />
+              </button>
+              <div className="text-center mb-6 mt-4">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-green-50">
+                  <Mail size={28} className="text-green-600"/>
+                </div>
+                <h1 className="text-2xl font-bold">Reset Password</h1>
+              </div>
+              {!resetSent ? (
+                <form onSubmit={handleResetPassword} className="space-y-4">
+                  <div>
+                    <label className="block text-xs uppercase font-semibold text-gray-500 mb-1">Email Address</label>
+                    <input type="email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} className="w-full border p-3 rounded-xl outline-none" required/>
+                  </div>
+                  {error && <div className="text-red-500 text-sm bg-red-50 p-2 rounded-lg text-center">{error}</div>}
+                  <button type="submit" className="w-full text-white font-semibold py-3 rounded-xl active:scale-95 transition" style={{ backgroundColor: BRAND.green }}>Send Link</button>
+                </form>
+              ) : (
+                <div className="text-center bg-green-50 p-4 rounded-xl border border-green-200">
+                  <CheckCircle2 size={32} className="text-green-600 mx-auto mb-2" />
+                  <h3 className="font-bold text-green-800">Check Your Inbox</h3>
+                </div>
+              )}
+            </div>
           )}
+
         </div>
       </div>
     );
@@ -167,7 +200,7 @@ export default function AdminPage() {
     <div style={{ backgroundColor: BRAND.bg, minHeight: '100vh' }}>
       <header className="border-b p-4 flex justify-between items-center sticky top-0 z-10" style={{ backgroundColor: BRAND.ink, color: 'white' }}>
         <div className="flex items-center gap-6">
-          <h1 className="text-xl font-bold">👨‍🍳 Liban Admin</h1>
+          <h1 className="text-xl font-bold">🍹 Liban Admin</h1>
           <div className="hidden md:flex bg-white/10 rounded-full p-1">
             <button onClick={() => setActiveTab('kitchen')} className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${activeTab === 'kitchen' ? 'bg-white text-black' : 'text-gray-300 hover:text-white'}`}>Kitchen Dashboard</button>
             <button onClick={() => setActiveTab('reports')} className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${activeTab === 'reports' ? 'bg-white text-black' : 'text-gray-300 hover:text-white'}`}>Reports & History</button>
@@ -215,7 +248,12 @@ export default function AdminPage() {
                         {order.items.map((item, idx) => (
                           <div key={idx} className="text-sm">
                             <span className="font-bold mr-2 text-gray-500">{item.qty}x</span><span className="font-bold text-gray-800">{item.name}</span>
-                            <div className="text-xs text-gray-500 ml-6">{item.sizeLabel}{item.mods && Object.values(item.mods).flat().map(m => ` · ${m.name}`).join('')}</div>
+                            <div className="text-xs text-gray-500 ml-6">
+                              {item.sizeLabel}
+                              {item.mods && Object.values(item.mods).flat().map((m, mIdx) => (
+                                <span key={mIdx}> • {m.name}</span>
+                              ))}
+                            </div>
                           </div>
                         ))}
                       </div>
